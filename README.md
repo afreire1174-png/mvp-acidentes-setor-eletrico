@@ -6,11 +6,11 @@ MVP de Engenharia de Dados para análise de acidentes e ocorrências de seguran�
 
 O setor elétrico envolve atividades que expõem trabalhadores a diferentes riscos ocupacionais, tornando a segurança do trabalho um tema relevante para a gestão das organizações. Nesse contexto, a análise de registros de acidentes, quase-acidentes e outras ocorrências pode contribuir para compreender as circunstâncias dos eventos e produzir informações que apoiem a discussão de medidas preventivas, especialmente aquelas voltadas à preservação da vida. Vale mencionar que essas ocorrências  podem apresentar diferentes níveis de gravidade, desde eventos sem lesão fatal até acidentes com óbito. Conhecer apenas o total de registros não é suficiente para orientar ações preventivas: é preciso entender como as ocorrências se distribuem e quais características aparecem com maior frequência nos casos fatais. Essa análise pode ajudar a identificar situações que merecem investigação e prioridade nas ações de prevenção.
 
-###1.1. Objetivo
+### 1.1. Objetivo
 
 O objetivo deste MVP é descrever a distribuição das ocorrências registradas na base e comparar os acidentes fatais com as demais ocorrências. A análise buscará identificar diferenças observáveis nas variáveis disponíveis, como período, local, atividade e características do evento, conforme os campos efetivamente presentes no banco de dados. Os resultados terão caráter descritivo e exploratório; associações encontradas não serão tratadas como causas dos acidentes.
 
-###1.2. Perguntas do Negócio
+### 1.2. Perguntas do Negócio
 
   • Quantas ocorrências estão registradas e como se distribuem por gravidade e ao longo do tempo?
   • Em quais locais, atividades ou categorias disponíveis na base há maior concentração de ocorrências?
@@ -22,7 +22,7 @@ O objetivo deste MVP é descrever a distribuição das ocorrências registradas 
 
 A coleta dos dados deste MVP foi realizada por meio da obtenção de uma planilha corporativa contendo registros históricos de acidentes e ocorrências de segurança no setor elétrico. Trata-se de uma fonte de dados secundários, pois as informações já haviam sido registradas pela organização e foram utilizadas no projeto para fins de análise.
 
-O arquivo de origem, denominado “BD_Acidentes_Dados_Brutos.xlsx”, foi obtido em formato Excel e contém uma única aba, chamada “Acidentes”, composta por 1.718 registros e 63 colunas, referentes às ocorrências registradas entre 2020 e 2025. Os dados dessa aba foram posteriormente exportados para o formato CSV para utilização nas etapas seguintes do pipeline.
+O arquivo de origem, denominado “BD_Acidentes_Dados_Brutos.xlsx”, foi obtido em formato Excel e contém uma única aba, chamada “Acidentes”, composta por 1.718 registros e 63 colunas, referentes às ocorrências registradas entre 2020 e 2025. 
 
 O conjunto de dados reúne informações sobre as circunstâncias e as consequências das ocorrências, incluindo data e horário, localização, segmento de atuação, tipo de trabalho, agente causador, gravidade, lesões, afastamentos e investigação. Esse contexto permite analisar a distribuição dos eventos ao longo do tempo e identificar padrões associados às atividades e aos níveis de gravidade, contribuindo para responder às perguntas de negócio definidas no projeto.
 
@@ -44,7 +44,7 @@ Risco e investigação	          Potencial, Grau de Risco, Compromissos (Regra d
 
 Neste trabalho, a apresentação da modelagem de dados foi organizada em duas subseções: Estrutura e definição do modelo de dados e Catálogo e dicionário de dados, considerando a base resultante dos procedimentos de anonimização. A primeira descreve a avaliação da consistência, da completude e da padronização dos dados, destacando as limitações e as necessidades de tratamento. A segunda documenta a estrutura da tabela analítica, apresentando os campos, seus significados, tipos de dados e regras de interpretação, de modo a apoiar sua utilização nas análises do projeto.
 
-###3.1 Estrutura e definição do modelo de dados
+### 3.1 Estrutura e definição do modelo de dados
 
 Neste MVP, foi adotado o modelo de tabela única desnormalizada (flat table), com base no arquivo BD_Acidentes_tratada.xlsx, resultante dos procedimentos de tratamento e proteção dos dados pessoais. A base é composta por 1.718 registros e 23 colunas, referentes ao período de 2020 a 2025. Os atributos de caracterização, localização, tempo, vínculo e consequências das ocorrências estão reunidos na mesma estrutura, permitindo consultas e agregações sem necessidade de junções entre tabelas.
 
@@ -58,7 +58,7 @@ A análise temporal deve respeitar o detalhamento disponível na fonte. Como a p
 
 A identificação dos registros fatais será baseada no campo Classificação, considerando as categorias Fatalidade e Fatalidade Trajeto. O campo Gravidade, por representar níveis de gravidade que não correspondem diretamente à fatalidade, não será utilizado isoladamente para essa identificação. Propõe-se a criação de um indicador derivado que diferencie registros fatais, demais classificações reconhecidas e situações com classificação ausente ou não reconhecida.
 
-###3.2 Catálogo e dicionário de dados
+### 3.2 Catálogo e dicionário de dados
 
 O catálogo de dados documenta a origem, a finalidade e a organização do conjunto utilizado no projeto. O dicionário complementa essa documentação ao apresentar a definição dos atributos, os tipos de dados propostos e as regras de interpretação, contribuindo para a utilização consistente das informações e para a reprodutibilidade das análises.
 
@@ -94,23 +94,52 @@ A substituição da coluna "chave" noa tabela original por id_registro proporcio
 
 ## 4. Carga e Pipeline
 
-###4.1 Ingestão dos dados no Databricks
+### 4.1 Arquitetura do pipeline
 
-A carga foi realizada por meio do upload do arquivo
-`BD_Acidentes_tratada_v3.xlsx` para um Volume gerenciado pelo Unity
-Catalog, no ambiente Databricks.
+O pipeline foi planejado segundo a arquitetura medalhão, que organiza os dados em três camadas com diferentes níveis de tratamento e
+preparação para análise: Bronze, Silver e Gold.
 
-O arquivo foi armazenado no seguinte caminho:
+| Camada | Finalidade no projeto |
+|---|---|
+| Bronze | Preservar os dados recebidos, com alterações técnicas mínimas, permitindo rastreabilidade e reprocessamento. |
+| Silver | Aplicar validações, padronização, tratamento de inconsistências e medidas de proteção dos dados pessoais. |
+| Gold | Disponibilizar a tabela analítica no modelo flat e os indicadores necessários às perguntas de negócio. |
+
+As camadas representam etapas lógicas dentro do mesmo ambiente Databricks, sem necessidade de plataformas separadas para armazenamento
+e análise.
+
+Até esta etapa, foram realizados o upload do arquivo para um Volume, a criação do identificador técnico, a exclusão da chave original e
+o perfilamento inicial. A persistência desses dados em tabelas Delta organizadas nas camadas Bronze, Silver e Gold constitui a próxima
+etapa de implementação.
+
+
+### 4.2 Ingestão dos dados no Databricks
+
+A base original, descrita na seção Coleta de Dados, possui 1.718 registros
+e 63 colunas. Para esta etapa, foi utilizada a versão
+`BD_Acidentes_tratada_v3.xlsx`, composta por 1.718 registros e 23 colunas,
+resultante da preparação anterior ao upload.
+
+A relação dos campos removidos ou modificados e os critérios utilizados
+nessa preparação ainda precisam ser documentados. As transformações
+apresentadas nesta seção têm como ponto de partida a versão de 23 colunas.
+
+A carga inicial foi realizada por meio do upload desse arquivo para
+o Volume `arquivos_mvp`, pertencente ao schema `default` do catálogo
+`workspace`, no Databricks. O notebook de processamento foi salvo
+na pasta de usuário do Workspace.
+
+**Caminho do arquivo de entrada:**
 
 ```text
 /Volumes/workspace/default/arquivos_mvp/BD_Acidentes_tratada_v3.xlsx
 ```
 
-O processamento foi executado em um notebook Python, utilizando pandas
-para leitura e manipulação dos dados e openpyxl para acesso ao formato
-Excel. A dependência openpyxl foi configurada no ambiente do notebook.
+A leitura da aba `Acidentes` foi realizada em Python, utilizando
+as bibliotecas pandas e openpyxl. A conferência confirmou
+1.718 registros e 23 colunas.
 
-A leitura da aba `Acidentes` identificou 1.718 registros e 23 colunas.
+**Código de leitura e conferência:**
 
 ```python
 import pandas as pd
@@ -130,41 +159,33 @@ print("Registros:", len(df))
 print("Colunas:", len(df.columns))
 ```
 
-Resultado obtido:
+**Resultado obtido:**
 
 ```text
 Registros: 1718
 Colunas: 23
 ```
 
-###4.2 Criação do identificador técnico e exclusão da chave original
+### 4.3 Criação do identificador técnico e exclusão da chave original
 
-Foi criado o campo `id_registro`, composto por um UUID aleatório para
-cada linha. Esse identificador é independente dos atributos da fonte
-e permite identificar os registros sem incorporar informações pessoais
-em sua composição.
+Foi criado o campo `id_registro`, composto por um UUID aleatório para cada linha. Esse identificador é independente dos atributos da fonte
+e permite identificar os registros sem incorporar informações pessoais em sua composição.
 
-A coluna original `Chave` foi excluída da versão analítica. O arquivo
-de origem foi preservado, e a transformação não alterou a quantidade
+A coluna original `Chave` foi excluída da versão analítica. O arquivo de origem foi preservado, e a transformação não alterou a quantidade
 de registros.
 
-Os identificadores foram gerados uma única vez e persistidos na nova
-versão. Nas execuções posteriores, a versão salva deve ser carregada
+Os identificadores foram gerados uma única vez e persistidos na nova versão. Nas execuções posteriores, a versão salva deve ser carregada
 para evitar a atribuição de novos códigos às mesmas linhas.
 
-###4.3 Persistência e validação da versão resultante
+### 4.4 Persistência e validação da versão resultante
 
-Durante a execução, a gravação direta do Excel no Volume apresentou
-erro de entrada e saída. A persistência foi realizada pela criação
-do arquivo em armazenamento temporário local, seguida de sua cópia
-para o Volume.
+Durante a execução, a gravação direta do Excel no Volume apresentou erro de entrada e saída. A persistência foi realizada pela criação
+do arquivo em armazenamento temporário local, seguida de sua cópia para o Volume.
 
-Após a gravação, o arquivo foi relido para verificar a quantidade de
-linhas e colunas, a preservação dos identificadores e a ausência da
+Após a gravação, o arquivo foi relido para verificar a quantidade de linhas e colunas, a preservação dos identificadores e a ausência da
 coluna `Chave`.
 
-O código abaixo consolida o procedimento de transformação, persistência
-e validação, incluindo a reutilização da versão existente:
+O código abaixo consolida o procedimento de transformação, persistência e validação, incluindo a reutilização da versão existente:
 
 ```python
 import pandas as pd
@@ -277,33 +298,34 @@ print("Coluna Chave presente:", "Chave" in df_analitica.columns)
 ```
 
 O procedimento reutiliza o arquivo de destino quando ele já existe.
-Essa lógica preserva os IDs, mas não implementa a incorporação automática
-de novos registros ou de alterações posteriores na fonte.
+Essa lógica preserva os IDs, mas não implementa a incorporação automática de novos registros ou de alterações posteriores na fonte.
 
-###4.4 Resultados da transformação
+### 4.5 Resultados da transformação
 
 As verificações realizadas sobre a versão resultante apresentaram:
 
 | Verificação | Resultado |
-
+|---|---:|
 | Quantidade de registros | 1.718 |
+
 | Quantidade de colunas | 23 |
+
 | Identificadores distintos em `id_registro` | 1.718 |
+
 | Valores ausentes em `id_registro` | 0 |
+
 | Presença da coluna `Chave` | Não |
 
-A inclusão de `id_registro` e a exclusão de `Chave` preservaram as
-dimensões da base. A unicidade do identificador permite distinguir
-as linhas, mas não comprova a ausência de duplicidades de conteúdo
-nem identifica, necessariamente, acidentes distintos.
+A inclusão de `id_registro` e a exclusão de `Chave` preservaram as dimensões da base. A unicidade do identificador permite distinguir
+as linhas, mas não comprova a ausência de duplicidades de conteúdo nem identifica, necessariamente, acidentes distintos.
 
-O arquivo resultante foi armazenado em:
+### O arquivo resultante foi armazenado em:
 
 ```text
 /Volumes/workspace/default/arquivos_mvp/BD_Acidentes_com_id_sem_chave_v2.xlsx
 ```
 
-###4.5 Encadeamento das etapas e escopo implementado
+### 4.6 Encadeamento das etapas e escopo implementado
 
 O fluxo executado compreendeu:
 
@@ -314,20 +336,15 @@ O fluxo executado compreendeu:
 5. Gravação e conferência da versão resultante.
 6. Releitura do arquivo salvo para o perfilamento de qualidade.
 
-O diagnóstico de valores ausentes, tipos de dados e valores distintos
-é apresentado na seção Qualidade de Dados.
+O diagnóstico de valores ausentes, tipos de dados e valores distintos é apresentado na seção Qualidade de Dados.
 
 Até esta etapa, o fluxo utiliza arquivos Excel armazenados em um Volume.
-Ainda não foi demonstrada a criação de tabelas Delta nem a implementação
-completa das camadas Bronze, Silver e Gold. Essas etapas deverão ser
+Ainda não foi demonstrada a criação de tabelas Delta nem a implementação completa das camadas Bronze, Silver e Gold. Essas etapas deverão ser
 documentadas conforme forem executadas.
 
 A substituição da chave original não conclui a anonimização da base.
-Descrições livres e combinações de atributos ainda requerem avaliação
-antes de qualquer divulgação. Os arquivos detalhados não integram
+Descrições livres e combinações de atributos ainda requerem avaliação antes de qualquer divulgação. Os arquivos detalhados não integram
 os materiais públicos do projeto.
-
-
 
 ## 5. Qualidade de Dados
 
@@ -335,7 +352,7 @@ A avaliação inicial da qualidade foi realizada no Databricks, utilizando Pytho
 analisados o preenchimento dos campos, os tipos reconhecidos na leitura e a quantidade de valores distintos. Os resultados e as limitações
 identificadas são apresentados a seguir.
 
-###5.1 Completude dos dados
+### 5.1 Completude dos dados
 
 A completude foi avaliada pela quantidade e pelo percentual de valores ausentes em cada coluna. Células vazias e textos compostos apenas por espaços foram considerados ausentes no perfilamento.
 
@@ -364,7 +381,7 @@ podem não ser aplicáveis. A distinção entre “não informado” e “não s
 As quantidades da tabela não devem ser somadas para determinar o total de registros incompletos, pois uma mesma linha pode apresentar ausência
 em vários campos.
 
-###5.2 Consistência
+### 5.2 Consistência
 
 A avaliação inicial identificou diferenças de preenchimento que podem fragmentar categorias equivalentes e afetar os agrupamentos analíticos.
 
@@ -379,7 +396,7 @@ como “D” e “NA” também precisam ter seus significados esclarecidos.
 
 Esses resultados constituem um diagnóstico. A padronização das categorias e a validação das relações entre campos ainda não foram concluídas.
 
-###5.3 Unicidade
+### 5.3 Unicidade
 
 O campo `id_registro` apresentou 1.718 valores distintos e nenhum valor ausente, confirmando a unicidade dos identificadores das linhas na
 versão analisada.
@@ -390,7 +407,7 @@ podem apresentar informações semelhantes ou estar associados ao mesmo evento.
 A identificação de acidentes distintos depende de uma chave de evento ou de critérios validados com a fonte. Portanto, as contagens da base
 representam registros de segurança, e não necessariamente acidentes distintos ou pessoas envolvidas.
 
-###5.4 Acurácia
+### 5.4 Acurácia
 
 A acurácia corresponde à correspondência entre os dados registrados e os fatos que representam. O perfilamento realizado permite identificar
 problemas de preenchimento e valores potencialmente inconsistentes, mas não comprova a exatidão factual das informações.
@@ -404,7 +421,7 @@ não classificados como fatais.
 
 Os resultados analíticos deverão ser interpretados conforme as classificações registradas, sem pressupor validação independente dos fatos.
 
-###5.5 Outliers
+### 5.5 Outliers
 
 Não foi realizada, nesta etapa, uma análise estatística específica de valores extremos. A base é predominantemente categórica, e valores ou
 categorias pouco frequentes não devem ser classificados automaticamente como erros.
@@ -418,7 +435,7 @@ O valor “16” no campo Gravidade constitui uma inconsistência de domínio a 
 Nenhum registro foi excluído por apresentar valor extremo ou categoria rara. As fatalidades, embora pouco frequentes, são relevantes para as
 perguntas de negócio e devem ser preservadas na análise.
 
-###5.6 Tratamentos realizados
+### 5.6 Tratamentos realizados
 
 Até esta etapa, foram realizadas as seguintes operações:
 
