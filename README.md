@@ -89,11 +89,361 @@ Potencial	                          Valor numérico de potencial registrado.	   
 Grau de Risco	                      Categoria de risco do registro.	                      STRING	                        Baixo, Médio, Alto e Crítico, após padronização.
 Compromissos (Regra de Ouro)	      Regra de segurança associada ao registro.            	STRING	                        Código e descrição da regra; inclui “Não se Aplica” e marcador D, a validar.
 
-A substituição da coluna chave por id_registro proporcionou preenchimento completo e unicidade, permitindo distinguir cada linha da tabela analítica. Após a gravação, os identificadores serão reutilizados nas etapas seguintes, garantindo sua persistência. Essa transformação não comprova a ausência de registros duplicados em conteúdo nem conclui a anonimização dos demais atributos.
-
-
-
-
+A substituição da coluna "chave" noa tabela original por id_registro proporcionou preenchimento completo e unicidade, permitindo distinguir cada linha da tabela analítica. Após a gravação, os identificadores serão reutilizados nas etapas seguintes, garantindo sua persistência. Essa transformação não comprova a ausência de registros duplicados em conteúdo nem conclui a anonimização dos demais atributos.
 
 
 ## 4. Carga e Pipeline
+
+###4.1 Ingestão dos dados no Databricks
+
+A carga foi realizada por meio do upload do arquivo
+`BD_Acidentes_tratada_v3.xlsx` para um Volume gerenciado pelo Unity
+Catalog, no ambiente Databricks.
+
+O arquivo foi armazenado no seguinte caminho:
+
+```text
+/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_tratada_v3.xlsx
+```
+
+O processamento foi executado em um notebook Python, utilizando pandas
+para leitura e manipulação dos dados e openpyxl para acesso ao formato
+Excel. A dependência openpyxl foi configurada no ambiente do notebook.
+
+A leitura da aba `Acidentes` identificou 1.718 registros e 23 colunas.
+
+```python
+import pandas as pd
+
+caminho_origem = (
+    "/Volumes/workspace/default/arquivos_mvp/"
+    "BD_Acidentes_tratada_v3.xlsx"
+)
+
+df = pd.read_excel(
+    caminho_origem,
+    sheet_name="Acidentes",
+    engine="openpyxl"
+)
+
+print("Registros:", len(df))
+print("Colunas:", len(df.columns))
+```
+
+Resultado obtido:
+
+```text
+Registros: 1718
+Colunas: 23
+```
+
+###4.2 Criação do identificador técnico e exclusão da chave original
+
+Foi criado o campo `id_registro`, composto por um UUID aleatório para
+cada linha. Esse identificador é independente dos atributos da fonte
+e permite identificar os registros sem incorporar informações pessoais
+em sua composição.
+
+A coluna original `Chave` foi excluída da versão analítica. O arquivo
+de origem foi preservado, e a transformação não alterou a quantidade
+de registros.
+
+Os identificadores foram gerados uma única vez e persistidos na nova
+versão. Nas execuções posteriores, a versão salva deve ser carregada
+para evitar a atribuição de novos códigos às mesmas linhas.
+
+###4.3 Persistência e validação da versão resultante
+
+Durante a execução, a gravação direta do Excel no Volume apresentou
+erro de entrada e saída. A persistência foi realizada pela criação
+do arquivo em armazenamento temporário local, seguida de sua cópia
+para o Volume.
+
+Após a gravação, o arquivo foi relido para verificar a quantidade de
+linhas e colunas, a preservação dos identificadores e a ausência da
+coluna `Chave`.
+
+O código abaixo consolida o procedimento de transformação, persistência
+e validação, incluindo a reutilização da versão existente:
+
+```python
+import pandas as pd
+import uuid
+import tempfile
+import shutil
+from pathlib import Path
+
+origem = Path(
+    "/Volumes/workspace/default/arquivos_mvp/"
+    "BD_Acidentes_tratada_v3.xlsx"
+)
+
+destino = Path(
+    "/Volumes/workspace/default/arquivos_mvp/"
+    "BD_Acidentes_com_id_sem_chave_v2.xlsx"
+)
+
+
+def validar_identificadores(tabela):
+    assert "id_registro" in tabela.columns, (
+        "A coluna id_registro não foi encontrada."
+    )
+    assert "Chave" not in tabela.columns, (
+        "A coluna Chave ainda está presente."
+    )
+
+    ids = tabela["id_registro"].astype("string")
+
+    assert ids.notna().all(), "Existem IDs nulos."
+    assert ids.str.strip().ne("").all(), "Existem IDs vazios."
+    assert ids.is_unique, "Existem IDs duplicados."
+
+
+if destino.exists():
+    # Reutilizar os identificadores persistidos
+    df_analitica = pd.read_excel(
+        destino,
+        sheet_name="Acidentes",
+        engine="openpyxl"
+    )
+
+    validar_identificadores(df_analitica)
+    print("Versão existente carregada. IDs preservados.")
+
+else:
+    df_origem = pd.read_excel(
+        origem,
+        sheet_name="Acidentes",
+        engine="openpyxl"
+    )
+
+    df_analitica = df_origem.copy()
+
+    # Preservar IDs caso já estejam presentes na entrada
+    if "id_registro" not in df_analitica.columns:
+        df_analitica.insert(
+            0,
+            "id_registro",
+            [str(uuid.uuid4()) for _ in range(len(df_analitica))]
+        )
+
+    df_analitica = df_analitica.drop(columns=["Chave"])
+
+    validar_identificadores(df_analitica)
+
+    assert len(df_analitica) == len(df_origem), (
+        "A quantidade de registros foi alterada."
+    )
+
+    # Gerar o Excel localmente e copiar para o Volume
+    with tempfile.TemporaryDirectory() as pasta:
+        temporario = Path(pasta) / "acidentes.xlsx"
+
+        df_analitica.to_excel(
+            temporario,
+            sheet_name="Acidentes",
+            index=False,
+            engine="openpyxl"
+        )
+
+        shutil.copyfile(temporario, destino)
+
+    # Conferir o arquivo persistido
+    conferencia = pd.read_excel(
+        destino,
+        sheet_name="Acidentes",
+        engine="openpyxl"
+    )
+
+    validar_identificadores(conferencia)
+
+    assert conferencia.shape == df_analitica.shape, (
+        "As dimensões do arquivo salvo diferem da tabela preparada."
+    )
+
+    assert (
+        conferencia["id_registro"].astype(str).tolist()
+        == df_analitica["id_registro"].astype(str).tolist()
+    ), "Os identificadores não foram preservados."
+
+    df_analitica = conferencia
+    print("Arquivo salvo e conferido!")
+
+print("Registros:", len(df_analitica))
+print("Colunas:", len(df_analitica.columns))
+print("IDs únicos:", df_analitica["id_registro"].nunique())
+print("IDs nulos:", df_analitica["id_registro"].isna().sum())
+print("Coluna Chave presente:", "Chave" in df_analitica.columns)
+```
+
+O procedimento reutiliza o arquivo de destino quando ele já existe.
+Essa lógica preserva os IDs, mas não implementa a incorporação automática
+de novos registros ou de alterações posteriores na fonte.
+
+###4.4 Resultados da transformação
+
+As verificações realizadas sobre a versão resultante apresentaram:
+
+| Verificação | Resultado |
+
+| Quantidade de registros | 1.718 |
+| Quantidade de colunas | 23 |
+| Identificadores distintos em `id_registro` | 1.718 |
+| Valores ausentes em `id_registro` | 0 |
+| Presença da coluna `Chave` | Não |
+
+A inclusão de `id_registro` e a exclusão de `Chave` preservaram as
+dimensões da base. A unicidade do identificador permite distinguir
+as linhas, mas não comprova a ausência de duplicidades de conteúdo
+nem identifica, necessariamente, acidentes distintos.
+
+O arquivo resultante foi armazenado em:
+
+```text
+/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_com_id_sem_chave_v2.xlsx
+```
+
+###4.5 Encadeamento das etapas e escopo implementado
+
+O fluxo executado compreendeu:
+
+1. Upload da planilha para o Volume.
+2. Leitura da aba Acidentes.
+3. Criação do identificador técnico.
+4. Exclusão da coluna Chave da cópia analítica.
+5. Gravação e conferência da versão resultante.
+6. Releitura do arquivo salvo para o perfilamento de qualidade.
+
+O diagnóstico de valores ausentes, tipos de dados e valores distintos
+é apresentado na seção Qualidade de Dados.
+
+Até esta etapa, o fluxo utiliza arquivos Excel armazenados em um Volume.
+Ainda não foi demonstrada a criação de tabelas Delta nem a implementação
+completa das camadas Bronze, Silver e Gold. Essas etapas deverão ser
+documentadas conforme forem executadas.
+
+A substituição da chave original não conclui a anonimização da base.
+Descrições livres e combinações de atributos ainda requerem avaliação
+antes de qualquer divulgação. Os arquivos detalhados não integram
+os materiais públicos do projeto.
+
+
+
+## 5. Qualidade de Dados
+
+A avaliação inicial da qualidade foi realizada no Databricks, utilizando Python e pandas, sobre a base com 1.718 registros e 23 colunas. Foram
+analisados o preenchimento dos campos, os tipos reconhecidos na leitura e a quantidade de valores distintos. Os resultados e as limitações
+identificadas são apresentados a seguir.
+
+###5.1 Completude dos dados
+
+A completude foi avaliada pela quantidade e pelo percentual de valores ausentes em cada coluna. Células vazias e textos compostos apenas por espaços foram considerados ausentes no perfilamento.
+
+As seguintes colunas apresentaram valores ausentes:
+
+| Campo | Quantidade de valores ausentes | Percentual de valores ausentes |
+
+| Parte do Corpo Atingida | 637 | 37,08% |
+| Gravidade | 522 | 30,38% |
+| Tipo de Lesão | 351 | 20,43% |
+| Agente Causador | 344 | 20,02% |
+| Tempo de Empresa | 169 | 9,84% |
+| Sexo | 98 | 5,70% |
+| Local | 45 | 2,62% |
+| Organização do trabalho | 29 | 1,69% |
+| Hora | 8 | 0,47% |
+| Dia da Semana | 1 | 0,06% |
+| Empregado | 1 | 0,06% |
+
+Os maiores percentuais de ausência foram identificados em Parte do Corpo Atingida e Gravidade. Essas limitações devem ser consideradas nas análises
+que utilizam tais campos, explicitando a cobertura dos dados disponíveis.
+
+A ausência de informação não representa necessariamente erro. Em quase acidentes e desvios críticos, por exemplo, campos relacionados a lesões
+podem não ser aplicáveis. A distinção entre “não informado” e “não se aplica” depende de regras validadas com a fonte.
+
+As quantidades da tabela não devem ser somadas para determinar o total de registros incompletos, pois uma mesma linha pode apresentar ausência
+em vários campos.
+
+###5.2 Consistência
+
+A avaliação inicial identificou diferenças de preenchimento que podem fragmentar categorias equivalentes e afetar os agrupamentos analíticos.
+
+O campo Dia da Semana apresentou 18 valores distintos, embora seu domínio esperado corresponda aos sete dias da semana. Foram observadas variações
+de espaços, grafia e acentuação. Hora apresentou 30 valores distintos, incluindo diferenças de formatação das faixas horárias.
+
+Também foram identificadas variações de espaços em Segmento e Grau de Risco. No campo Gravidade, além de Baixo, Médio e Alto, foram observados
+os valores “-” e “16”, que exigem validação antes de qualquer correção.
+
+O campo Tempo de Empresa combina faixas de duração com descrições pontuais, demandando critérios para eventual uniformização. Marcadores
+como “D” e “NA” também precisam ter seus significados esclarecidos.
+
+Esses resultados constituem um diagnóstico. A padronização das categorias e a validação das relações entre campos ainda não foram concluídas.
+
+###5.3 Unicidade
+
+O campo `id_registro` apresentou 1.718 valores distintos e nenhum valor ausente, confirmando a unicidade dos identificadores das linhas na
+versão analisada.
+
+Esse resultado decorre da atribuição de um UUID a cada registro e não comprova a ausência de duplicidades de conteúdo. Registros diferentes
+podem apresentar informações semelhantes ou estar associados ao mesmo evento.
+
+A identificação de acidentes distintos depende de uma chave de evento ou de critérios validados com a fonte. Portanto, as contagens da base
+representam registros de segurança, e não necessariamente acidentes distintos ou pessoas envolvidas.
+
+###5.4 Acurácia
+
+A acurácia corresponde à correspondência entre os dados registrados e os fatos que representam. O perfilamento realizado permite identificar
+problemas de preenchimento e valores potencialmente inconsistentes, mas não comprova a exatidão factual das informações.
+
+Não foi realizada conferência sistemática com documentos de origem, relatórios de investigação ou responsáveis pelos registros. Dessa forma,
+a acurácia permanece parcialmente não verificada.
+
+Para os indicadores de fatalidade, foi estabelecido que a identificação deve utilizar as categorias Fatalidade e Fatalidade Trajeto do campo
+Classificação. O campo Gravidade não deve ser utilizado isoladamente para essa finalidade, pois a categoria Alto também ocorre em registros
+não classificados como fatais.
+
+Os resultados analíticos deverão ser interpretados conforme as classificações registradas, sem pressupor validação independente dos fatos.
+
+###5.5 Outliers
+
+Não foi realizada, nesta etapa, uma análise estatística específica de valores extremos. A base é predominantemente categórica, e valores ou
+categorias pouco frequentes não devem ser classificados automaticamente como erros.
+
+O campo Potencial apresentou 24 valores distintos, entre 1 e 25.
+A avaliação de valores atípicos nesse campo depende do conhecimento da escala utilizada e de seus limites admissíveis. Caso represente uma
+escala ordinal ou um código, métodos estatísticos destinados a medidas contínuas podem não ser apropriados.
+
+O valor “16” no campo Gravidade constitui uma inconsistência de domínio a investigar, e não um outlier estatístico confirmado.
+
+Nenhum registro foi excluído por apresentar valor extremo ou categoria rara. As fatalidades, embora pouco frequentes, são relevantes para as
+perguntas de negócio e devem ser preservadas na análise.
+
+###5.6 Tratamentos realizados
+
+Até esta etapa, foram realizadas as seguintes operações:
+
+| Operação | Finalidade | Resultado |
+
+| Criação de `id_registro` | Identificar cada linha por um código independente dos atributos originais. | 1.718 UUIDs distintos e nenhum valor ausente. |
+| Exclusão de `Chave` da versão analítica | Retirar o identificador original dessa versão. | A base permaneceu com 23 colunas após a substituição. |
+| Gravação e releitura da nova planilha | Persistir os identificadores e conferir sua preservação. | Versão salva e conferida, com 1.718 registros. |
+| Reconhecimento de textos compostos apenas por espaços como ausentes | Evitar subestimação de valores ausentes no perfilamento. | Regra aplicada à cópia utilizada na avaliação, sem comprovação de gravação dessa alteração na base persistida. |
+
+A versão resultante foi salva como `BD_Acidentes_com_id_sem_chave_v2.xlsx`. Nas etapas seguintes, esse arquivo será utilizado para preservar os identificadores já atribuídos.
+
+Não foram executadas, no fluxo documentado até aqui, a imputação de valores ausentes, a exclusão de duplicidades de conteúdo, a padronização
+completa das categorias ou a remoção de outliers. Essas ações dependerão de regras justificadas e deverão ser acompanhadas de nova avaliação
+da qualidade.
+
+A criação do identificador técnico e a exclusão de `Chave` não concluem a anonimização. A divulgação da base detalhada depende de avaliação
+adicional das descrições livres e das combinações de atributos que possam permitir a reidentificação dos envolvidos.
+
+
+## 6. Análise dos Resultados
+
+
+
+
+## 7. Autoavaliação
+
+
