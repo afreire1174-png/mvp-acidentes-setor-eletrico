@@ -139,23 +139,6 @@ A leitura da aba `Acidentes` foi realizada em Python, utilizando
 as bibliotecas pandas e openpyxl. A conferência confirmou
 1.718 registros e 23 colunas.
 
-**Código de leitura e conferência:**
-
-```python
-import pandas as pd
-
-caminho = (
-    "/Volumes/workspace/default/arquivos_mvp/"
-    "BD_Acidentes_tratada_v3.xlsx"
-)
-
-df = pd.read_excel(caminho, sheet_name="Acidentes")
-
-print("Quantidade de registros:", len(df))
-print("Quantidade de colunas:", len(df.columns))
-print("Colunas:", df.columns.tolist())
-```
-
 **Resultado obtido:**
 
 ```text
@@ -183,119 +166,45 @@ do arquivo em armazenamento temporário local, seguida de sua cópia para o Volu
 Após a gravação, o arquivo foi relido para verificar a quantidade de linhas e colunas, a preservação dos identificadores e a ausência da
 coluna `Chave`.
 
-O código abaixo consolida o procedimento de transformação, persistência e validação, incluindo a reutilização da versão existente:
-
-```python
-import pandas as pd
-import uuid
-import tempfile
-import shutil
-from pathlib import Path
-
-pasta = Path("/Volumes/workspace/default/arquivos_mvp")
-
-origem = pasta / "BD_Acidentes_tratada_v3.xlsx"
-destino = pasta / "BD_Acidentes_com_id_sem_chave_v2.xlsx"
-
-def validar(tabela):
-    assert "id_registro" in tabela.columns, "Coluna id_registro ausente."
-    assert "Chave" not in tabela.columns, "A coluna Chave ainda existe."
-
-    ids = tabela["id_registro"].astype("string")
-    assert ids.notna().all(), "Existem IDs nulos."
-    assert ids.str.strip().ne("").all(), "Existem IDs vazios."
-    assert ids.is_unique, "Existem IDs duplicados."
-
-if destino.exists():
-    # Recuperar a tabela salva, preservando os IDs.
-    df_analitica = pd.read_excel(
-        destino, sheet_name="Acidentes", engine="openpyxl"
-    )
-    validar(df_analitica)
-    print("Arquivo existente carregado. IDs preservados.")
-
-else:
-    df = pd.read_excel(
-        origem, sheet_name="Acidentes", engine="openpyxl"
-    )
-
-    df_analitica = df.copy()
-
-    if "id_registro" not in df_analitica.columns:
-        df_analitica.insert(
-            0,
-            "id_registro",
-            [str(uuid.uuid4()) for _ in range(len(df_analitica))]
-        )
-
-    df_analitica = df_analitica.drop(columns=["Chave"])
-    validar(df_analitica)
-
-    with tempfile.TemporaryDirectory() as pasta_temporaria:
-        temporario = Path(pasta_temporaria) / "acidentes.xlsx"
-
-        df_analitica.to_excel(
-            temporario,
-            sheet_name="Acidentes",
-            index=False,
-            engine="openpyxl"
-        )
-
-        shutil.copyfile(temporario, destino)
-
-    conferencia = pd.read_excel(
-        destino, sheet_name="Acidentes", engine="openpyxl"
-    )
-    validar(conferencia)
-
-    assert conferencia.shape == df_analitica.shape
-    assert (
-        conferencia["id_registro"].tolist()
-        == df_analitica["id_registro"].tolist()
-    ), "Os IDs não foram preservados na gravação."
-
-    df_analitica = conferencia
-    print("Arquivo criado, salvo e conferido.")
-
-print("Registros:", len(df_analitica))
-print("Colunas:", len(df_analitica.columns))
-print("IDs únicos:", df_analitica["id_registro"].nunique())
-print("Coluna Chave presente:", "Chave" in df_analitica.columns)
-```
 **Resultado obtido:**
+```text
 Arquivo existente carregado. IDs preservados.
 Registros: 1718
 Colunas: 23
 IDs únicos: 1718
 Coluna Chave presente: False
+```
 
 O procedimento reutiliza o arquivo de destino quando ele já existe.
 Essa lógica preserva os IDs, mas não implementa a incorporação automática de novos registros ou de alterações posteriores na fonte.
 
 ### 4.5 Resultados da transformação
 
-As verificações realizadas sobre a versão resultante apresentaram:
+As verificações realizadas no Databricks, por meio do código
+apresentado na seção 4.4, produziram os seguintes resultados:
+
+**Resultado obtido:**
 
 | Verificação | Resultado |
 |---|---:|
 | Quantidade de registros | 1.718 |
-
 | Quantidade de colunas | 23 |
-
 | Identificadores distintos em `id_registro` | 1.718 |
-
 | Valores ausentes em `id_registro` | 0 |
-
 | Presença da coluna `Chave` | Não |
 
-A inclusão de `id_registro` e a exclusão de `Chave` preservaram as dimensões da base. A unicidade do identificador permite distinguir
-as linhas, mas não comprova a ausência de duplicidades de conteúdo nem identifica, necessariamente, acidentes distintos.
+A substituição de `Chave` por `id_registro` preservou a quantidade
+de registros e de colunas da base. Os identificadores gerados
+são únicos e não apresentam valores ausentes.
 
-**O arquivo resultante foi armazenado em:**
+A unicidade de `id_registro` permite distinguir as linhas, mas
+não comprova a ausência de duplicidades de conteúdo nem assegura
+que cada registro corresponda a um acidente distinto.
 
-```text
-/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_com_id_sem_chave_v2.xlsx
-```
+A versão resultante foi armazenada no arquivo
+`/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_com_id_sem_chave_v2.xlsx`.
+
+Nas execuções seguintes, o procedimento reutiliza esse arquivo e preserva os identificadores já atribuídos.
 
 ### 4.6 Encadeamento das etapas e escopo implementado
 
@@ -423,10 +332,6 @@ A versão resultante foi salva como `BD_Acidentes_com_id_sem_chave_v2.xlsx`. Nas
 Não foram executadas, no fluxo documentado até aqui, a imputação de valores ausentes, a exclusão de duplicidades de conteúdo, a padronização
 completa das categorias ou a remoção de outliers. Essas ações dependerão de regras justificadas e deverão ser acompanhadas de nova avaliação
 da qualidade.
-
-A criação do identificador técnico e a exclusão de `Chave` não concluem a anonimização. A divulgação da base detalhada depende de avaliação
-adicional das descrições livres e das combinações de atributos que possam permitir a reidentificação dos envolvidos.
-
 
 ## 6. Análise dos Resultados
 
