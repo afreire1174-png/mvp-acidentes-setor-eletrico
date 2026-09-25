@@ -108,9 +108,17 @@ preparação para análise: Bronze, Silver e Gold.
 As camadas representam etapas lógicas dentro do mesmo ambiente Databricks, sem necessidade de plataformas separadas para armazenamento
 e análise.
 
-Até esta etapa, foram realizados o upload do arquivo para um Volume, a criação do identificador técnico, a exclusão da chave original e
-o perfilamento inicial. A persistência desses dados em tabelas Delta organizadas nas camadas Bronze, Silver e Gold constitui a próxima
-etapa de implementação.
+Foram criados os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold`
+no catálogo `workspace`, estabelecendo a organização das camadas
+da arquitetura medalhão.
+
+Também foram realizados o upload da planilha para o Volume
+`arquivos_mvp`, a criação e persistência do identificador técnico,
+a exclusão da coluna `Chave` da versão analítica e o perfilamento inicial.
+
+Até esta etapa, os schemas estão disponíveis, mas as tabelas Delta
+e as transformações entre Bronze, Silver e Gold ainda não foram
+implementadas.
 
 
 ### 4.2 Ingestão dos dados no Databricks
@@ -146,6 +154,11 @@ Quantidade de registros: 1718
 Quantidade de colunas: 23
 Colunas: ['Empregado', 'Classificação', 'Empresa', 'Segmento', 'Sexo', 'Tempo de Empresa', 'Dia da Semana', 'Mês', 'Ano', 'Hora', 'Descrição', 'Local', 'Organização do trabalho', 'Estado', 'Diretoria', 'Agente Causador', 'Tipo de Lesão', 'Parte do Corpo Atingida', 'Gravidade', 'Potencial', 'Grau de Risco', 'Compromissos (Regra de Ouro)', 'Chave']
 ```
+
+## 4.3 Carga da camada Bronze
+
+
+
 
 ### 4.3 Criação do identificador técnico e exclusão da chave original
 
@@ -334,6 +347,21 @@ completa das categorias ou a remoção de outliers. Essas ações dependerão de
 da qualidade.
 
 ## 6. Análise dos Resultados
+
+A análise tem como objetivo responder às perguntas de negócio por meio
+de contagens, distribuições percentuais, séries temporais e comparações
+entre grupos. Serão utilizados os dados da tabela analítica após
+a aplicação e a validação dos tratamentos documentados.
+
+A unidade de análise corresponde a um registro de segurança.
+A base inclui acidentes, quase acidentes, desvios críticos e doenças
+ocupacionais. Portanto, o total de registros não deve ser interpretado
+automaticamente como número de acidentes distintos ou de vítimas.
+
+Os resultados serão apresentados com consultas, tabelas ou gráficos,
+seguidos de interpretação e limitações. As análises deverão explicitar
+o tratamento dos valores ausentes e o denominador dos percentuais.
+
 
 
 
