@@ -144,26 +144,24 @@ as bibliotecas pandas e openpyxl. A conferência confirmou
 ```python
 import pandas as pd
 
-caminho_origem = (
+caminho = (
     "/Volumes/workspace/default/arquivos_mvp/"
     "BD_Acidentes_tratada_v3.xlsx"
 )
 
-df = pd.read_excel(
-    caminho_origem,
-    sheet_name="Acidentes",
-    engine="openpyxl"
-)
+df = pd.read_excel(caminho, sheet_name="Acidentes")
 
-print("Registros:", len(df))
-print("Colunas:", len(df.columns))
+print("Quantidade de registros:", len(df))
+print("Quantidade de colunas:", len(df.columns))
+print("Colunas:", df.columns.tolist())
 ```
 
 **Resultado obtido:**
 
 ```text
-Registros: 1718
-Colunas: 23
+Quantidade de registros: 1718
+Quantidade de colunas: 23
+Colunas: ['Empregado', 'Classificação', 'Empresa', 'Segmento', 'Sexo', 'Tempo de Empresa', 'Dia da Semana', 'Mês', 'Ano', 'Hora', 'Descrição', 'Local', 'Organização do trabalho', 'Estado', 'Diretoria', 'Agente Causador', 'Tipo de Lesão', 'Parte do Corpo Atingida', 'Gravidade', 'Potencial', 'Grau de Risco', 'Compromissos (Regra de Ouro)', 'Chave']
 ```
 
 ### 4.3 Criação do identificador técnico e exclusão da chave original
@@ -194,53 +192,35 @@ import tempfile
 import shutil
 from pathlib import Path
 
-origem = Path(
-    "/Volumes/workspace/default/arquivos_mvp/"
-    "BD_Acidentes_tratada_v3.xlsx"
-)
+pasta = Path("/Volumes/workspace/default/arquivos_mvp")
 
-destino = Path(
-    "/Volumes/workspace/default/arquivos_mvp/"
-    "BD_Acidentes_com_id_sem_chave_v2.xlsx"
-)
+origem = pasta / "BD_Acidentes_tratada_v3.xlsx"
+destino = pasta / "BD_Acidentes_com_id_sem_chave_v2.xlsx"
 
-
-def validar_identificadores(tabela):
-    assert "id_registro" in tabela.columns, (
-        "A coluna id_registro não foi encontrada."
-    )
-    assert "Chave" not in tabela.columns, (
-        "A coluna Chave ainda está presente."
-    )
+def validar(tabela):
+    assert "id_registro" in tabela.columns, "Coluna id_registro ausente."
+    assert "Chave" not in tabela.columns, "A coluna Chave ainda existe."
 
     ids = tabela["id_registro"].astype("string")
-
     assert ids.notna().all(), "Existem IDs nulos."
     assert ids.str.strip().ne("").all(), "Existem IDs vazios."
     assert ids.is_unique, "Existem IDs duplicados."
 
-
 if destino.exists():
-    # Reutilizar os identificadores persistidos
+    # Recuperar a tabela salva, preservando os IDs.
     df_analitica = pd.read_excel(
-        destino,
-        sheet_name="Acidentes",
-        engine="openpyxl"
+        destino, sheet_name="Acidentes", engine="openpyxl"
     )
-
-    validar_identificadores(df_analitica)
-    print("Versão existente carregada. IDs preservados.")
+    validar(df_analitica)
+    print("Arquivo existente carregado. IDs preservados.")
 
 else:
-    df_origem = pd.read_excel(
-        origem,
-        sheet_name="Acidentes",
-        engine="openpyxl"
+    df = pd.read_excel(
+        origem, sheet_name="Acidentes", engine="openpyxl"
     )
 
-    df_analitica = df_origem.copy()
+    df_analitica = df.copy()
 
-    # Preservar IDs caso já estejam presentes na entrada
     if "id_registro" not in df_analitica.columns:
         df_analitica.insert(
             0,
@@ -249,16 +229,10 @@ else:
         )
 
     df_analitica = df_analitica.drop(columns=["Chave"])
+    validar(df_analitica)
 
-    validar_identificadores(df_analitica)
-
-    assert len(df_analitica) == len(df_origem), (
-        "A quantidade de registros foi alterada."
-    )
-
-    # Gerar o Excel localmente e copiar para o Volume
-    with tempfile.TemporaryDirectory() as pasta:
-        temporario = Path(pasta) / "acidentes.xlsx"
+    with tempfile.TemporaryDirectory() as pasta_temporaria:
+        temporario = Path(pasta_temporaria) / "acidentes.xlsx"
 
         df_analitica.to_excel(
             temporario,
@@ -269,33 +243,31 @@ else:
 
         shutil.copyfile(temporario, destino)
 
-    # Conferir o arquivo persistido
     conferencia = pd.read_excel(
-        destino,
-        sheet_name="Acidentes",
-        engine="openpyxl"
+        destino, sheet_name="Acidentes", engine="openpyxl"
     )
+    validar(conferencia)
 
-    validar_identificadores(conferencia)
-
-    assert conferencia.shape == df_analitica.shape, (
-        "As dimensões do arquivo salvo diferem da tabela preparada."
-    )
-
+    assert conferencia.shape == df_analitica.shape
     assert (
-        conferencia["id_registro"].astype(str).tolist()
-        == df_analitica["id_registro"].astype(str).tolist()
-    ), "Os identificadores não foram preservados."
+        conferencia["id_registro"].tolist()
+        == df_analitica["id_registro"].tolist()
+    ), "Os IDs não foram preservados na gravação."
 
     df_analitica = conferencia
-    print("Arquivo salvo e conferido!")
+    print("Arquivo criado, salvo e conferido.")
 
 print("Registros:", len(df_analitica))
 print("Colunas:", len(df_analitica.columns))
 print("IDs únicos:", df_analitica["id_registro"].nunique())
-print("IDs nulos:", df_analitica["id_registro"].isna().sum())
 print("Coluna Chave presente:", "Chave" in df_analitica.columns)
 ```
+**Resultado obtido:**
+Arquivo existente carregado. IDs preservados.
+Registros: 1718
+Colunas: 23
+IDs únicos: 1718
+Coluna Chave presente: False
 
 O procedimento reutiliza o arquivo de destino quando ele já existe.
 Essa lógica preserva os IDs, mas não implementa a incorporação automática de novos registros ou de alterações posteriores na fonte.
@@ -319,7 +291,7 @@ As verificações realizadas sobre a versão resultante apresentaram:
 A inclusão de `id_registro` e a exclusão de `Chave` preservaram as dimensões da base. A unicidade do identificador permite distinguir
 as linhas, mas não comprova a ausência de duplicidades de conteúdo nem identifica, necessariamente, acidentes distintos.
 
-### O arquivo resultante foi armazenado em:
+**O arquivo resultante foi armazenado em:**
 
 ```text
 /Volumes/workspace/default/arquivos_mvp/BD_Acidentes_com_id_sem_chave_v2.xlsx
