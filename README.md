@@ -155,7 +155,20 @@ Quantidade de colunas: 23
 Colunas: ['Empregado', 'Classificação', 'Empresa', 'Segmento', 'Sexo', 'Tempo de Empresa', 'Dia da Semana', 'Mês', 'Ano', 'Hora', 'Descrição', 'Local', 'Organização do trabalho', 'Estado', 'Diretoria', 'Agente Causador', 'Tipo de Lesão', 'Parte do Corpo Atingida', 'Gravidade', 'Potencial', 'Grau de Risco', 'Compromissos (Regra de Ouro)', 'Chave']
 ```
 
-## 4.3 Carga da camada Bronze
+### 4.3 Carga da camada Bronze
+
+A partir do arquivo apresentado no item 4.2, foi preparada a rotina
+de carga da tabela Delta `workspace.mvp_bronze.acidentes`.
+
+A preparação técnica normaliza os nomes das colunas e define todos
+os campos como STRING, preservando o conteúdo recebido para os
+tratamentos posteriores. A rotina verifica a existência da tabela
+antes da gravação, evitando sua sobrescrita.
+
+A validação da carga compara a quantidade de registros e a estrutura
+das colunas com os dados de entrada e verifica o formato Delta.
+A confirmação dos resultados será registrada após a execução
+bem-sucedida.
 
 
 
