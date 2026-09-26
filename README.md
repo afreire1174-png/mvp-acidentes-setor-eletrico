@@ -42,17 +42,41 @@ Risco e investigação	          Potencial, Grau de Risco, Compromissos (Regra d
 
 ## 3. Modelagem de Dados
 
-Neste trabalho, a apresentação da modelagem de dados foi organizada em duas subseções: Estrutura e definição do modelo de dados e Catálogo e dicionário de dados, considerando a base resultante dos procedimentos de anonimização. A primeira descreve a avaliação da consistência, da completude e da padronização dos dados, destacando as limitações e as necessidades de tratamento. A segunda documenta a estrutura da tabela analítica, apresentando os campos, seus significados, tipos de dados e regras de interpretação, de modo a apoiar sua utilização nas análises do projeto.
+## 3. Modelagem de Dados
+
+A modelagem foi organizada em duas subseções: Estrutura e definição do modelo de dados e Catálogo e dicionário de dados. A primeira
+apresenta o modelo flat, sua granularidade, o identificador técnico e os tipos propostos. A segunda documenta o significado dos campos
+e suas regras de interpretação.
+
+A estrutura considera a versão preparada para análise, com
+substituição de `Chave` por `id_registro`. Essa alteração não
+caracteriza, isoladamente, anonimização da base.
 
 ### 3.1 Estrutura e definição do modelo de dados
 
-Neste MVP, foi adotado o modelo de tabela única desnormalizada (flat table), com base no arquivo BD_Acidentes_tratada.xlsx, resultante dos procedimentos de tratamento e proteção dos dados pessoais. A base é composta por 1.718 registros e 23 colunas, referentes ao período de 2020 a 2025. Os atributos de caracterização, localização, tempo, vínculo e consequências das ocorrências estão reunidos na mesma estrutura, permitindo consultas e agregações sem necessidade de junções entre tabelas.
+Neste MVP, foi adotado o modelo de tabela única desnormalizada (flat table), tendo como referência a versão
+`BD_Acidentes_com_id_sem_chave_v2.xlsx`, resultante da criação do identificador técnico `id_registro` e da exclusão da coluna `Chave`.
 
-A granularidade corresponde a uma linha por registro da base recebida. O campo Chave apresenta 1.718 valores distintos e nenhum valor ausente, sendo candidato a identificador único dos registros. Essa unicidade, contudo, não assegura que cada linha represente um acidente distinto, pois um mesmo evento pode envolver várias pessoas ou gerar múltiplos registros. Até que essa relação seja confirmada com a fonte, os totais devem ser interpretados como quantidades de registros.
+Essa versão contém 1.718 registros e 23 colunas, referentes ao
+período de 2020 a 2025. Os atributos de caracterização, localização,
+tempo, vínculo e consequências das ocorrências estão reunidos
+na mesma estrutura, permitindo consultas e agregações sem
+necessidade de junções entre tabelas.
+
+A implementação da tabela analítica final na camada Gold permanece
+prevista para as etapas seguintes do pipeline.
+
+A granularidade corresponde a uma linha por registro de segurança. O campo `id_registro`, gerado como UUID e persistido na versão
+preparada para análise, apresentou 1.718 valores distintos e nenhum valor ausente. A coluna `Chave` foi excluída dessa versão, permanecendo
+na entrada preservada na Bronze.
+
+A unicidade do identificador não comprova que cada linha represente um acidente distinto. Portanto, os totais serão interpretados como
+quantidades de registros.
 
 A escolha pelo modelo flat considera o volume de dados e os objetivos analíticos do projeto. A estrutura permite avaliar a distribuição dos registros por período, classificação, gravidade, segmento, estado, categoria de local e agente causador, além de comparar as características dos registros fatais com as demais ocorrências. Nesse modelo, não há separação em tabelas fato e dimensão nem relacionamentos por chaves estrangeiras.
 
-Para implementação no Databricks, propõe-se a tabela acidentes_analiticos, com tipos de dados definidos conforme o significado dos campos. Ano, Mês e Potencial devem ser representados como números inteiros. Os demais campos devem ser inicialmente armazenados como texto, incluindo Hora, que contém faixas horárias, e Tempo de Empresa, que apresenta intervalos e descrições de duração. O campo Chave deve ser mantido como identificador textual.
+Para implementação no Databricks, propõe-se a tabela acidentes analíticos, com tipos de dados definidos conforme o significado dos campos. Ano, Mês e Potencial devem ser representados como números inteiros. Os demais campos devem ser inicialmente armazenados como texto, incluindo Hora, que contém faixas horárias, e Tempo de Empresa, que apresenta intervalos e descrições de duração. A tabela analítica final está prevista como `workspace.mvp_gold.acidentes_analiticos`. Os tipos apresentados no dicionário são propostos para a estrutura analítica. Na Bronze,
+todos os campos foram armazenados como STRING; as conversões de Ano, Mês e Potencial para inteiros serão avaliadas na Silver.
 
 A análise temporal deve respeitar o detalhamento disponível na fonte. Como a planilha não contém a data completa das ocorrências, as séries temporais serão organizadas por ano e mês. Os campos Dia da Semana e Hora permitem análises complementares de distribuição, mas não possibilitam reconstruir a data exata dos eventos.
 
@@ -108,34 +132,29 @@ preparação para análise: Bronze, Silver e Gold.
 As camadas representam etapas lógicas dentro do mesmo ambiente Databricks, sem necessidade de plataformas separadas para armazenamento
 e análise.
 
-Foram criados os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold`
-no catálogo `workspace`, estabelecendo a organização das camadas
+Foram criados os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold` no catálogo `workspace`, estabelecendo a organização das camadas
 da arquitetura medalhão.
 
-Também foram realizados o upload da planilha para o Volume
-`arquivos_mvp`, a criação e persistência do identificador técnico,
+Também foram realizados o upload da planilha para o Volume `arquivos_mvp`, a criação e persistência do identificador técnico,
 a exclusão da coluna `Chave` da versão analítica e o perfilamento inicial.
 
-Até esta etapa, os schemas estão disponíveis, mas as tabelas Delta
-e as transformações entre Bronze, Silver e Gold ainda não foram
-implementadas.
+Foram criados os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold` no catálogo `workspace`. A tabela `workspace.mvp_bronze.acidentes`
+foi carregada e verificada, apresentando 1.718 registros, 23 colunas e armazenamento em formato Delta.
+
+A implementação das tabelas Silver e Gold e das transformações
+entre as camadas permanece pendente.
 
 
 ### 4.2 Ingestão dos dados no Databricks
 
-A base original, descrita na seção Coleta de Dados, possui 1.718 registros
-e 63 colunas. Para esta etapa, foi utilizada a versão
-`BD_Acidentes_tratada_v3.xlsx`, composta por 1.718 registros e 23 colunas,
-resultante da preparação anterior ao upload.
+A base original, descrita na seção Coleta de Dados, possui 1.718 registros e 63 colunas. Para esta etapa, foi utilizada a versão
+`BD_Acidentes_tratada_v3.xlsx`, composta por 1.718 registros e 23 colunas, resultante da preparação anterior ao upload.
 
-A relação dos campos removidos ou modificados e os critérios utilizados
-nessa preparação ainda precisam ser documentados. As transformações
+A relação dos campos removidos ou modificados e os critérios utilizados nessa preparação ainda precisam ser documentados. As transformações
 apresentadas nesta seção têm como ponto de partida a versão de 23 colunas.
 
-A carga inicial foi realizada por meio do upload desse arquivo para
-o Volume `arquivos_mvp`, pertencente ao schema `default` do catálogo
-`workspace`, no Databricks. O notebook de processamento foi salvo
-na pasta de usuário do Workspace.
+A carga inicial foi realizada por meio do upload desse arquivo para o Volume `arquivos_mvp`, pertencente ao schema `default` do catálogo
+`workspace`, no Databricks. O notebook de processamento foi salvo na pasta de usuário do Workspace.
 
 **Caminho do arquivo de entrada:**
 
@@ -167,13 +186,26 @@ antes da gravação, evitando sua sobrescrita.
 
 A validação da carga compara a quantidade de registros e a estrutura
 das colunas com os dados de entrada e verifica o formato Delta.
-A confirmação dos resultados será registrada após a execução
-bem-sucedida.
 
+A carga foi concluída e a consulta à tabela confirmou os seguintes
+resultados:
 
+| Verificação | Resultado obtido |
+|---|---|
+| Tabela | `workspace.mvp_bronze.acidentes` |
+| Registros | 1.718 |
+| Colunas | 23 |
+| Formato | Delta |
 
+As verificações confirmaram as dimensões esperadas e o formato
+de armazenamento, sem comprovar a igualdade integral dos valores
+com a fonte ou a ausência de duplicidades de conteúdo.
 
-### 4.3 Criação do identificador técnico e exclusão da chave original
+### 4.4 Criação do identificador técnico e exclusão da chave original
+
+Antes da implementação da tabela Bronze, foi preparada uma cópia Excel com o identificador `id_registro` e sem a coluna `Chave`.
+Essa versão foi utilizada no perfilamento inicial. Os identificadores persistidos deverão ser preservados na implementação da Silver,
+cuja vinculação aos registros da Bronze ainda precisa ser definida e validada.
 
 Foi criado o campo `id_registro`, composto por um UUID aleatório para cada linha. Esse identificador é independente dos atributos da fonte
 e permite identificar os registros sem incorporar informações pessoais em sua composição.
@@ -184,7 +216,7 @@ de registros.
 Os identificadores foram gerados uma única vez e persistidos na nova versão. Nas execuções posteriores, a versão salva deve ser carregada
 para evitar a atribuição de novos códigos às mesmas linhas.
 
-### 4.4 Persistência e validação da versão resultante
+### 4.5 Persistência e validação da versão resultante
 
 Durante a execução, a gravação direta do Excel no Volume apresentou erro de entrada e saída. A persistência foi realizada pela criação
 do arquivo em armazenamento temporário local, seguida de sua cópia para o Volume.
@@ -204,7 +236,7 @@ Coluna Chave presente: False
 O procedimento reutiliza o arquivo de destino quando ele já existe.
 Essa lógica preserva os IDs, mas não implementa a incorporação automática de novos registros ou de alterações posteriores na fonte.
 
-### 4.5 Resultados da transformação
+### 4.6 Resultados da transformação
 
 As verificações realizadas no Databricks, por meio do código
 apresentado na seção 4.4, produziram os seguintes resultados:
@@ -232,7 +264,7 @@ A versão resultante foi armazenada no arquivo
 
 Nas execuções seguintes, o procedimento reutiliza esse arquivo e preserva os identificadores já atribuídos.
 
-### 4.6 Encadeamento das etapas e escopo implementado
+### 4.7 Encadeamento das etapas e escopo implementado
 
 O fluxo executado compreendeu:
 
@@ -255,18 +287,24 @@ os materiais públicos do projeto.
 
 ## 5. Qualidade de Dados
 
-A avaliação inicial da qualidade foi realizada no Databricks, utilizando Python e pandas, sobre a base com 1.718 registros e 23 colunas. Foram
-analisados o preenchimento dos campos, os tipos reconhecidos na leitura e a quantidade de valores distintos. Os resultados e as limitações
-identificadas são apresentados a seguir.
+A avaliação inicial da qualidade foi realizada no Databricks, utilizando Python e pandas, sobre o arquivo
+`BD_Acidentes_com_id_sem_chave_v2.xlsx`, com 1.718 registros e 23 colunas. Foram analisados o preenchimento dos campos,
+os tipos reconhecidos na leitura e a quantidade de valores distintos.
+
+Os resultados apresentados correspondem a essa versão Excel. Não representam, ainda, o perfilamento direto da tabela Bronze
+nem a validação de uma camada Silver implementada.
 
 ### 5.1 Completude dos dados
 
 A completude foi avaliada pela quantidade e pelo percentual de valores ausentes em cada coluna. Células vazias e textos compostos apenas por espaços foram considerados ausentes no perfilamento.
 
+A leitura utilizou o reconhecimento padrão de valores ausentes do pandas. Adicionalmente, textos compostos apenas por espaços foram considerados
+ausentes na cópia de avaliação. Os percentuais refletem esse procedimento, e não necessariamente apenas células fisicamente vazias no Excel.
+
 As seguintes colunas apresentaram valores ausentes:
 
 | Campo | Quantidade de valores ausentes | Percentual de valores ausentes |
-
+|---|---:|---:|
 | Parte do Corpo Atingida | 637 | 37,08% |
 | Gravidade | 522 | 30,38% |
 | Tipo de Lesão | 351 | 20,43% |
@@ -347,7 +385,7 @@ perguntas de negócio e devem ser preservadas na análise.
 Até esta etapa, foram realizadas as seguintes operações:
 
 | Operação | Finalidade | Resultado |
-
+|---|---:|---:|
 | Criação de `id_registro` | Identificar cada linha por um código independente dos atributos originais. | 1.718 UUIDs distintos e nenhum valor ausente. |
 | Exclusão de `Chave` da versão analítica | Retirar o identificador original dessa versão. | A base permaneceu com 23 colunas após a substituição. |
 | Gravação e releitura da nova planilha | Persistir os identificadores e conferir sua preservação. | Versão salva e conferida, com 1.718 registros. |
