@@ -42,8 +42,6 @@ Risco e investigação	          Potencial, Grau de Risco, Compromissos (Regra d
 
 ## 3. Modelagem de Dados
 
-## 3. Modelagem de Dados
-
 A modelagem foi organizada em duas subseções: Estrutura e definição do modelo de dados e Catálogo e dicionário de dados. A primeira
 apresenta o modelo flat, sua granularidade, o identificador técnico e os tipos propostos. A segunda documenta o significado dos campos
 e suas regras de interpretação.
@@ -113,7 +111,7 @@ Potencial	                          Valor numérico de potencial registrado.	   
 Grau de Risco	                      Categoria de risco do registro.	                      STRING	                        Baixo, Médio, Alto e Crítico, após padronização.
 Compromissos (Regra de Ouro)	      Regra de segurança associada ao registro.            	STRING	                        Código e descrição da regra; inclui “Não se Aplica” e marcador D, a validar.
 
-A substituição da coluna "chave" noa tabela original por id_registro proporcionou preenchimento completo e unicidade, permitindo distinguir cada linha da tabela analítica. Após a gravação, os identificadores serão reutilizados nas etapas seguintes, garantindo sua persistência. Essa transformação não comprova a ausência de registros duplicados em conteúdo nem conclui a anonimização dos demais atributos.
+A substituição da coluna Chave na versão preparada para análise por id_registro proporcionou preenchimento completo e unicidade, permitindo distinguir cada linha da tabela analítica. Após a gravação, os identificadores serão reutilizados nas etapas seguintes, garantindo sua persistência. Essa transformação não comprova a ausência de registros duplicados em conteúdo nem conclui a anonimização dos demais atributos.
 
 
 ## 4. Carga e Pipeline
@@ -197,9 +195,20 @@ resultados:
 | Colunas | 23 |
 | Formato | Delta |
 
-As verificações confirmaram as dimensões esperadas e o formato
-de armazenamento, sem comprovar a igualdade integral dos valores
-com a fonte ou a ausência de duplicidades de conteúdo.
+#### Amostra dos dados carregados na Bronze
+
+Após a persistência da tabela, foi realizada a visualização de uma
+amostra de 10 registros da camada Bronze, com o objetivo de verificar
+visualmente se os dados foram carregados corretamente e se a estrutura
+das colunas foi preservada após a ingestão.
+
+A consulta utilizada foi:
+
+```python
+display(
+    spark.table("workspace.mvp_bronze.acidentes")
+         .limit(10)
+)
 
 ### 4.4 Criação do identificador técnico e exclusão da chave original
 
@@ -268,18 +277,20 @@ Nas execuções seguintes, o procedimento reutiliza esse arquivo e preserva os i
 
 O fluxo executado compreendeu:
 
-1. Upload da planilha para o Volume.
-2. Leitura da aba Acidentes.
-3. Criação do identificador técnico.
-4. Exclusão da coluna Chave da cópia analítica.
-5. Gravação e conferência da versão resultante.
-6. Releitura do arquivo salvo para o perfilamento de qualidade.
+1. Upload da planilha BD_Acidentes_tratada_v3.xlsx para o Volume.
+2. Leitura e conferência da aba Acidentes.
+3. Padronização técnica dos nomes das colunas.
+4. Carga e validação da tabela Bronze em formato Delta.
+5. Criação do identificador técnico id_registro na versão preparada para análise.
+6. Exclusão da coluna Chave dessa versão.
+7. Persistência e conferência de BD_Acidentes_com_id_sem_chave_v2.xlsx.
+8. Releitura da versão salva.
+9. Perfilamento inicial da qualidade dos dados.
 
 O diagnóstico de valores ausentes, tipos de dados e valores distintos é apresentado na seção Qualidade de Dados.
 
 Até esta etapa, o fluxo utiliza arquivos Excel armazenados em um Volume.
-Ainda não foi demonstrada a criação de tabelas Delta nem a implementação completa das camadas Bronze, Silver e Gold. Essas etapas deverão ser
-documentadas conforme forem executadas.
+A camada Bronze já foi implementada como tabela Delta e validada quanto à quantidade de registros, estrutura e formato de armazenamento. As camadas Silver e Gold, bem como as transformações entre essas etapas, permanecem pendentes de implementação e documentação. Essas etapas deverão ser documentadas conforme forem executadas.
 
 A substituição da chave original não conclui a anonimização da base.
 Descrições livres e combinações de atributos ainda requerem avaliação antes de qualquer divulgação. Os arquivos detalhados não integram
@@ -357,8 +368,7 @@ representam registros de segurança, e não necessariamente acidentes distintos 
 A acurácia corresponde à correspondência entre os dados registrados e os fatos que representam. O perfilamento realizado permite identificar
 problemas de preenchimento e valores potencialmente inconsistentes, mas não comprova a exatidão factual das informações.
 
-Não foi realizada conferência sistemática com documentos de origem, relatórios de investigação ou responsáveis pelos registros. Dessa forma,
-a acurácia permanece parcialmente não verificada.
+Não foi realizada conferência sistemática com documentos de origem, relatórios de investigação ou responsáveis pelos registros. Dessa forma, a acurácia factual dos registros não foi confirmada por validação independente.
 
 Para os indicadores de fatalidade, foi estabelecido que a identificação deve utilizar as categorias Fatalidade e Fatalidade Trajeto do campo
 Classificação. O campo Gravidade não deve ser utilizado isoladamente para essa finalidade, pois a categoria Alto também ocorre em registros
@@ -389,13 +399,20 @@ Até esta etapa, foram realizadas as seguintes operações:
 | Criação de `id_registro` | Identificar cada linha por um código independente dos atributos originais. | 1.718 UUIDs distintos e nenhum valor ausente. |
 | Exclusão de `Chave` da versão analítica | Retirar o identificador original dessa versão. | A base permaneceu com 23 colunas após a substituição. |
 | Gravação e releitura da nova planilha | Persistir os identificadores e conferir sua preservação. | Versão salva e conferida, com 1.718 registros. |
-| Reconhecimento de textos compostos apenas por espaços como ausentes | Evitar subestimação de valores ausentes no perfilamento. | Regra aplicada à cópia utilizada na avaliação, sem comprovação de gravação dessa alteração na base persistida. |
+| Reconhecimento de textos compostos apenas por espaços como ausentes | Evitar subestimação de valores ausentes no perfilamento. | Regra aplicada somente à cópia em memória utilizada na avaliação, sem alteração do arquivo de origem.|
 
 A versão resultante foi salva como `BD_Acidentes_com_id_sem_chave_v2.xlsx`. Nas etapas seguintes, esse arquivo será utilizado para preservar os identificadores já atribuídos.
 
 Não foram executadas, no fluxo documentado até aqui, a imputação de valores ausentes, a exclusão de duplicidades de conteúdo, a padronização
 completa das categorias ou a remoção de outliers. Essas ações dependerão de regras justificadas e deverão ser acompanhadas de nova avaliação
 da qualidade.
+
+A etapa atual corresponde ao diagnóstico inicial da versão Excel. A tabela Bronze já foi carregada em formato Delta, mas seu perfilamento
+direto e a validação dos tratamentos da Silver ainda serão realizados.
+
+A conclusão da avaliação de qualidade compreenderá a definição das regras para os campos utilizados nas análises, a investigação de
+possíveis duplicidades de conteúdo e a comparação dos indicadores antes e depois dos tratamentos. As alterações e as decisões de manter
+valores sem correção deverão ser justificadas e documentadas.
 
 ## 6. Análise dos Resultados
 
