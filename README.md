@@ -629,6 +629,33 @@ A tabela evidencia que a **Transmissão concentra 44,35% dos eventos Alto/Críti
 
 O gráfico reforça a predominância do segmento de **Transmissão**, que apresenta quantidade de eventos Alto/Crítico significativamente superior aos demais segmentos analisados.
 
+#### Distribuição dos eventos Alto/Crítico por estado
+
+A distribuição geográfica dos **345 eventos classificados como Alto ou Crítico** mostra que a maior concentração ocorre na **Bahia (BA)**, com **56 registros (16,23%)**. Na sequência aparecem **Rio Grande do Sul (RS)**, **Pernambuco (PE)**, **Rio de Janeiro (RJ)** e **São Paulo (SP)**.
+
+Para facilitar a visualização, a tabela apresenta os **10 estados com maior número de eventos Alto/Crítico**.
+
+| Estado | Quantidade | Percentual |
+|---|---:|---:|
+| BA | 56 | 16,23% |
+| RS | 34 | 9,86% |
+| PE | 30 | 8,70% |
+| RJ | 27 | 7,83% |
+| SP | 24 | 6,96% |
+| SC | 19 | 5,51% |
+| RO | 18 | 5,22% |
+| MA | 18 | 5,22% |
+| PA | 18 | 5,22% |
+| MG | 15 | 4,35% |
+
+Os resultados mostram maior concentração dos eventos Alto/Crítico na **Bahia**, embora os registros estejam distribuídos por diferentes estados, indicando uma dispersão geográfica relevante das ocorrências de maior grau de risco.
+
+
+
+
+
+
+
 
 ## 7. Autoavaliação
 
