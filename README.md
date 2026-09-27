@@ -494,7 +494,9 @@ A análise anual fornece uma visão temporal geral do conjunto de dados e serve 
 #### Análise
 
 A evolução anual mostra crescimento contínuo dos registros de ocorrências ao longo do período analisado, passando de 48 registros em 2020 para 592 em 2025, maior valor da série. Os anos de 2023, 2024 e 2025 concentram aproximadamente 82,4% dos 1.718 registros, indicando maior concentração nos anos mais recentes.
+
 O maior crescimento entre anos consecutivos ocorreu de 2022 para 2023, quando os registros passaram de 164 para 338 ocorrências.
+
 Esse comportamento deve ser interpretado como uma característica da base analisada, pois o aumento dos registros não significa necessariamente aumento real dos acidentes, podendo também refletir diferenças na cobertura, no processo de notificação ou na disponibilidade de dados ao longo do período.
 
 ## 7. Autoavaliação
