@@ -749,6 +749,32 @@ O gráfico reforça a predominância da **Transmissão** entre as principais com
 Esses resultados indicam os contextos mais frequentes observados na base, sem representar, isoladamente, uma medida de risco relativo.
 
 
+#### Combinação: Segmento × Agente causador
+
+O cruzamento entre **segmento e agente causador** mostra novamente forte presença do segmento de **Transmissão** entre as combinações mais frequentes. Destacam-se **Transmissão | Não informado**, com **32 eventos (9,28%)**, **Transmissão | Eletricidade**, com **27 (7,83%)**, e **Transmissão | Carro - Capotamento**, com **19 (5,51%)**.
+
+| Segmento | Agente causador | Quantidade | Percentual |
+|---|---|---:|---:|
+| Transmissão | Não informado | 32 | 9,28% |
+| Transmissão | Eletricidade | 27 | 7,83% |
+| Transmissão | Carro - Capotamento | 19 | 5,51% |
+| CSC | Não informado | 14 | 4,06% |
+| Transmissão | D | 13 | 3,77% |
+| Transmissão | Golpeado por (atingido por objeto em movimento) | 12 | 3,48% |
+| Expansão | D | 11 | 3,19% |
+| Geração - Hidráulica | D | 9 | 2,61% |
+| Transmissão | Moto - Queda | 8 | 2,32% |
+| Expansão | Carro - Colisão | 8 | 2,32% |
+
+#### Principais combinações: Segmento × Agente causador
+
+![Principais combinações Segmento x Agente causador](imagens/6_4_5_segmento_agente_causador.png)
+
+O gráfico evidencia a predominância da **Transmissão** entre as principais combinações. Entre os agentes claramente identificados, destacam-se **Eletricidade**, **Carro - Capotamento**, **Golpeado por objeto em movimento** e **Moto - Queda**.
+
+Também aparecem com frequência registros **não informados** e a categoria **“D”**. Conforme já identificado anteriormente, a categoria “D” foi mantida conforme registrada na base original, por não haver informação suficiente para associá-la a um agente causador específico. Esses registros devem ser considerados uma limitação de qualidade dos dados na interpretação dos resultados.
+
+
 
 
 
