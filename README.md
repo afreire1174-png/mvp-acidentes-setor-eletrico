@@ -419,114 +419,14 @@ A conclusão da avaliação de qualidade compreenderá a definição das regras 
 possíveis duplicidades de conteúdo e a comparação dos indicadores antes e depois dos tratamentos. As alterações e as decisões de manter
 valores sem correção deverão ser justificadas e documentadas.
 
-## 6. Análise dos Resultados
-
-A análise tem como objetivo responder às perguntas de negócio por meio
-de contagens, distribuições percentuais, séries temporais e comparações
-entre grupos. Serão utilizados os dados da tabela analítica após
-a aplicação e a validação dos tratamentos documentados.
-
-A unidade de análise corresponde a um registro de segurança.
-A base inclui acidentes, quase acidentes, desvios críticos e doenças
-ocupacionais. Portanto, o total de registros não deve ser interpretado
-automaticamente como número de acidentes distintos ou de vítimas.
-
-Os resultados serão apresentados com consultas, tabelas ou gráficos,
-seguidos de interpretação e limitações. As análises deverão explicitar
-o tratamento dos valores ausentes e o denominador dos percentuais.
-
-### 6.1 Total de ocorrências e distribuição por grau de risco
-
-**Pergunta de negócio:**  
-Quantas ocorrências estão registradas na base e como elas se distribuem por grau de risco?
-
-A base analisada possui **1.718 ocorrências**. A maior concentração está no grau de risco **Médio**, com 797 registros (46,39%), seguida pelo grau **Baixo**, com 576 registros (33,53%). Os eventos classificados como **Alto** totalizam 303 ocorrências (17,64%), enquanto os classificados como **Crítico** correspondem a 42 registros (2,44%).
-
-
-ainda não conseguir ver onde no notebook que tenho que acessar para gerar esse gráfico
-No Databricks, o gráfico é criado na área de resultado da célula, não dentro do código.
-
-Faça assim:
-
-Execute esta célula:
-display(distribuicao_grau_risco)
-Logo abaixo da célula, onde aparece a tabela com grau_de_risco, quantidade e percentual, procure no canto superior da área de resultado por algo como:
-
-+
-Visualization
-Plot
-ou um ícone de gráfico
-Clique nessa opção e escolha Bar chart.
-
-Configure:
-
-X / Category: grau_de_risco
-Y / Values: quantidade
-Salve/aplique a visualização.
-A lógica é:
-
-[CÉLULA PYTHON]
-display(distribuicao_grau_risco)
-
-        ↓ executar
-
-[RESULTADO DA CÉLULA]
-Tabela
-
-        ↓ clicar em Visualization / + / gráfico
-
-[BAR CHART]
-Se quiser, me mande um print da tela do Databricks logo depois de executar display(distribuicao_grau_risco). Eu consigo apontar exatamente onde você deve clicar na sua interface.
-
-Anexo do usuário
-Anexo do usuário
-resultados para montar texto da análise:
-Claro. Com base nos resultados apresentados, você pode colocar esta análise logo abaixo da tabela e do gráfico no Databricks:
-
-### Análise
-
-Foram registradas 1.718 ocorrências na base analisada. A maior parte dos registros está classificada como grau de risco Médio, com 797 ocorrências (46,39%), seguida pelo grau Baixo, com 576 ocorrências (33,53%).
-
-Os eventos classificados como Alto representam 303 ocorrências (17,64%), enquanto os classificados como Crítico totalizam 42 ocorrências (2,44%). Somados, os graus Alto e Crítico correspondem a 345 registros, aproximadamente 20,08% do total.
-
-Os resultados mostram predominância dos graus Médio e Baixo, que juntos representam cerca de 79,92% das ocorrências. Entretanto, a presença de aproximadamente um quinto dos registros classificados como Alto ou Crítico reforça a importância de analisar, nas etapas seguintes, os fatores associados aos eventos de maior grau de risco.
-Esse texto está adequado para o MVP porque responde diretamente à pergunta de negócio, usa os números e percentuais obtidos e já cria ligação com as análises seguintes.
-
-eu devo colar tabela e gráfico no read.me?
-Eu colocaria a tabela resumida e o gráfico no README, mas sem transformar o README numa cópia do notebook.
-
-Para o seu MVP, o melhor equilíbrio seria:
-
-README: pergunta de negócio + resultado principal + gráfico + análise curta.
-Notebook: código completo + tabela gerada + gráfico + análise detalhada.
-Para o 6.1, por exemplo, no README eu colocaria uma tabela pequena assim:
-
-Grau de risco	Quantidade	Percentual
-Médio	797	46,39%
-Baixo	576	33,53%
-Alto	303	17,64%
-Crítico	42	2,44%
-Total	1.718	100%
-Logo abaixo, colocaria a imagem do gráfico de barras que você acabou de gerar no Databricks e, depois, um parágrafo curto com a conclusão.
-
-Você não precisa colocar print do código no README. O código fica no notebook .ipynb. No README entram os resultados que ajudam o professor a entender rapidamente o que você encontrou.
-
-Para economizar tempo hoje, nas quatro perguntas eu faria no máximo um gráfico principal por pergunta no README. O detalhamento completo fica no notebook.
-
-monte as respóstas que devo colocar no read.me item e e item 6.1
-Claro. Para o README, eu deixaria o item 6 e o item 6.1 assim, já prontos para colar.
 
 ## 6. Análise das Perguntas de Negócio
 
 Nesta etapa, os dados consolidados na camada Gold são utilizados para responder às perguntas de negócio definidas para o MVP. As análises buscam identificar a distribuição das ocorrências, sua evolução ao longo do tempo e os principais fatores associados aos eventos de maior grau de risco.
 
 Os resultados são apresentados por meio de tabelas, gráficos e análises descritivas, permitindo relacionar os dados tratados nas etapas anteriores aos objetivos do projeto.
-### 6.1 Total de ocorrências e distribuição por grau de risco
 
-**Pergunta de negócio:**  
-Quantas ocorrências estão registradas na base e como elas se distribuem por grau de risco?
-
-### 6.1 Total de ocorrências e distribuição por grau de risco
+### 6.1 Quantas ocorrências estão registradas na base e como elas se distribuem por grau de risco?
 
 A base analisada possui **1.718 ocorrências**.
 
@@ -542,6 +442,17 @@ Os eventos classificados como **Alto ou Crítico** totalizam **345 ocorrências*
 
 Embora predominem os eventos de grau Médio e Baixo, a participação dos eventos Alto e Crítico justifica o aprofundamento das análises seguintes, especialmente na investigação dos agentes causadores e das características associadas às ocorrências de maior grau de risco.
 
+#### Distribuição das ocorrências por grau de risco
+
+![Distribuição das ocorrências por grau de risco](imagens/6_1_distribuicao_grau_risco.png)
+
+#### Análise
+
+Foram registradas **1.718 ocorrências** na base analisada. A maior concentração está no grau de risco **Médio**, com 797 registros (46,39%), seguida pelo grau **Baixo**, com 576 ocorrências (33,53%).
+
+Os eventos classificados como **Alto** representam 303 ocorrências (17,64%), enquanto os classificados como **Crítico** totalizam 42 registros (2,44%). Somados, os graus **Alto e Crítico correspondem a 345 ocorrências**, aproximadamente **20,08% do total da base**.
+
+Os resultados mostram predominância dos graus Médio e Baixo, que juntos representam **79,92%** das ocorrências. Entretanto, a participação dos eventos Alto e Crítico reforça a importância de aprofundar as análises sobre os fatores associados às ocorrências de maior grau de risco.
 
 
 ## 7. Autoavaliação
