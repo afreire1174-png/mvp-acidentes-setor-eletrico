@@ -15,7 +15,7 @@ O objetivo deste MVP é estruturar e analisar registros de segurança do setor e
 O trabalho contempla a organização dos dados nas camadas Bronze, Silver e Gold, a avaliação da qualidade dos dados e a análise da evolução das ocorrências, dos principais agentes causadores e das características associadas aos eventos Alto/Crítico.
 A análise tem caráter exploratório e descritivo, com foco em gerar informações que possam apoiar a prevenção e a gestão da segurança.
 
-### 1.2. Perguntas do Negócio
+### 1.2. Perguntas de Negócio
 
       1.1 Quantas ocorrências estão registradas na base e como elas se distribuem por gravidade?
 
