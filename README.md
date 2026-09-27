@@ -499,6 +499,26 @@ O maior crescimento entre anos consecutivos ocorreu de 2022 para 2023, quando os
 
 Esse comportamento deve ser interpretado como uma característica da base analisada, pois o aumento dos registros não significa necessariamente aumento real dos acidentes, podendo também refletir diferenças na cobertura, no processo de notificação ou na disponibilidade de dados ao longo do período.
 
+### 6.2.2 Evolução mensal das ocorrências
+
+A análise mensal evidencia oscilações na quantidade de registros ao longo do período estudado, com maior concentração nos anos mais recentes.
+
+O maior número mensal de registros foi observado em **outubro de 2025**, com **68 ocorrências**, enquanto o menor ocorreu em **novembro de 2020**, com **1 ocorrência**.
+
+O gráfico mostra que, apesar das variações entre os meses, os maiores volumes estão concentrados principalmente nos períodos mais recentes, comportamento coerente com a tendência identificada na evolução anual.
+
+![Evolução mensal das ocorrências](imagens/6_2_2_evolucao_mensal.png)
+
+#### Análise dos resultados
+
+A análise mensal evidencia oscilações na quantidade de ocorrências registradas ao longo do período estudado, com maior concentração de registros nos anos mais recentes.
+
+O gráfico mostra que, apesar das variações entre os meses, os volumes mensais se tornam mais elevados principalmente a partir de 2023, comportamento coerente com a tendência identificada na análise anual.
+
+Esses resultados devem ser interpretados como características da base analisada. As diferenças observadas entre os meses não permitem concluir, isoladamente, que houve aumento ou redução real dos acidentes, pois fatores como cobertura dos registros, processo de notificação e disponibilidade histórica dos dados também podem influenciar essa distribuição.
+
+
+
 ## 7. Autoavaliação
 
 
