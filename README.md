@@ -696,6 +696,38 @@ Entre os agentes claramente identificados, **Eletricidade** apresenta a maior fr
 
 Destaca-se, entretanto, a presença de **57 registros não informados (16,52%)** e **43 registros classificados como “D” (12,46%)**. A categoria **“D” foi mantida conforme registrada na base original, por não haver informação suficiente para associá-la a um agente causador específico**. Por esse motivo, tanto os registros não informados quanto a categoria “D” devem ser considerados uma limitação de qualidade dos dados e interpretados com cautela.
 
+### 6.4.2 Combinações de fatores mais frequentes
+
+Após a análise individual das principais características dos eventos Alto/Crítico, foram avaliadas combinações entre **segmento, estado/local e agente causador**, buscando identificar padrões recorrentes entre os fatores analisados.
+
+#### Combinação: Segmento × Estado
+
+O cruzamento entre **segmento e estado** mostra forte presença do segmento de **Transmissão** entre as combinações mais frequentes. A maior concentração ocorre em **Transmissão | BA**, com 18 eventos, seguida por **Transmissão | SP**, com 15 registros.
+
+| Segmento | Estado | Quantidade | Percentual |
+|---|:---:|---:|---:|
+| Transmissão | BA | 18 | 5,22% |
+| Transmissão | SP | 15 | 4,35% |
+| Transmissão | PE | 14 | 4,06% |
+| Transmissão | RJ | 14 | 4,06% |
+| Geração - Hidráulica | BA | 12 | 3,48% |
+| Transmissão | RO | 11 | 3,19% |
+| Transmissão | SC | 11 | 3,19% |
+| Transmissão | RS | 11 | 3,19% |
+| Expansão | BA | 9 | 2,61% |
+| Expansão | RS | 9 | 2,61% |
+
+#### Principais combinações: Segmento × Estado
+
+![Principais combinações Segmento x Estado](imagens/6_4_3_segmento_estado.png)
+
+O gráfico evidencia a predominância da **Transmissão** entre as principais combinações de segmento e estado. A **Bahia** também se destaca, aparecendo tanto associada à Transmissão quanto à Geração - Hidráulica e Expansão. Esses resultados indicam as combinações mais frequentes na base, não representando, isoladamente, uma medida de risco relativo.
+
+
+
+
+
+
 
 ## 7. Autoavaliação
 
