@@ -885,7 +885,27 @@ A análise dos **15 acidentes fatais** mostra maior concentração em **Via púb
 
 O gráfico evidencia a predominância de acidentes fatais em **Via pública**, que concentra mais da metade dos registros analisados. Os demais casos estão distribuídos entre **Empresa** e **Área rural**.
 
+#### Distribuição dos acidentes fatais por agente causador
 
+A análise dos **15 acidentes fatais** mostra maior frequência para **Queda com diferença de nível** e para a categoria **“D - categoria não detalhada”**, ambas com **4 registros (26,67%)**. Em seguida aparecem **Eletricidade** e **Não informado**, com **2 ocorrências cada (13,33%)**.
+
+| Agente causador | Quantidade | Percentual |
+|---|---:|---:|
+| Queda com diferença de nível | 4 | 26,67% |
+| D - categoria não detalhada | 4 | 26,67% |
+| Eletricidade | 2 | 13,33% |
+| Não informado | 2 | 13,33% |
+| Carro - Colisão | 1 | 6,67% |
+| Moto - Queda | 1 | 6,67% |
+| Carro - Capotamento | 1 | 6,67% |
+
+#### Principais agentes causadores dos acidentes fatais
+
+![Principais agentes causadores dos acidentes fatais](imagens/6_4_10_acidentes_fatais_agente_causador.png)
+
+O gráfico mostra que **Queda com diferença de nível** é o agente causador claramente identificado com maior frequência entre os acidentes fatais. A categoria **“D”** também apresenta 4 registros, mas foi mantida como **categoria não detalhada**, pois não há informação suficiente na base para associá-la a um agente causador específico.
+
+Também aparecem registros relacionados à **Eletricidade** e a acidentes com veículos. A presença de casos **não informados** e da categoria “D” deve ser considerada como uma limitação de qualidade dos dados na interpretação dos resultados.
 
 
 
