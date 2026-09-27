@@ -4,11 +4,16 @@ MVP de Engenharia de Dados para análise de acidentes e ocorrências de seguran�
 
 ## 1. Contexto do Negócio
 
-O setor elétrico envolve atividades que expõem trabalhadores a diferentes riscos ocupacionais, tornando a segurança do trabalho um tema relevante para a gestão das organizações. Nesse contexto, a análise de registros de acidentes, quase-acidentes e outras ocorrências pode contribuir para compreender as circunstâncias dos eventos e produzir informações que apoiem a discussão de medidas preventivas, especialmente aquelas voltadas à preservação da vida. Vale mencionar que essas ocorrências  podem apresentar diferentes níveis de gravidade, desde eventos sem lesão fatal até acidentes com óbito. Conhecer apenas o total de registros não é suficiente para orientar ações preventivas: é preciso entender como as ocorrências se distribuem e quais características aparecem com maior frequência nos casos fatais. Essa análise pode ajudar a identificar situações que merecem investigação e prioridade nas ações de prevenção.
+O setor elétrico envolve atividades com elevado potencial de risco, tornando a prevenção de acidentes um aspecto essencial da gestão de segurança. Nesse contexto, a análise de registros de acidentes, quase-acidentes e desvios permite identificar padrões, situações recorrentes e fatores associados aos eventos de maior gravidade.
+Essa abordagem está alinhada à Pirâmide de Bird, que demonstra que os acidentes graves representam uma parcela menor dentro de um conjunto muito maior de ocorrências de menor consequência. Como referência conceitual, a proporção clássica de Bird considera aproximadamente 600 eventos sem lesão, 30 com danos materiais, 10 com lesões leves e 1 acidente grave, reforçando a importância de acompanhar e tratar quase-acidentes e desvios críticos antes que situações semelhantes possam evoluir para eventos de maior consequência.
+A partir desse princípio, este MVP busca utilizar os dados disponíveis para compreender como as ocorrências se distribuem por grau de risco, como evoluem ao longo do tempo, quais agentes causadores aparecem com maior frequência nos eventos Alto/Crítico e quais características e combinações estão presentes nos acidentes de maior risco e nas fatalidades.
+Dessa forma, as análises desenvolvidas nas etapas do MVP procuram transformar os registros históricos em informações que possam apoiar a identificação de situações prioritárias para investigação e prevenção, contribuindo para uma atuação mais preventiva e orientada à redução de acidentes graves e fatais.
 
 ### 1.1. Objetivo
 
-O objetivo deste MVP é descrever a distribuição das ocorrências registradas na base e comparar os acidentes fatais com as demais ocorrências. A análise buscará identificar diferenças observáveis nas variáveis disponíveis, como período, local, atividade e características do evento, conforme os campos efetivamente presentes no banco de dados. Os resultados terão caráter descritivo e exploratório; associações encontradas não serão tratadas como causas dos acidentes.
+O objetivo deste MVP é estruturar e analisar registros de segurança do setor elétrico, buscando identificar padrões relacionados às ocorrências de maior risco e aos acidentes fatais.
+O trabalho contempla a organização dos dados nas camadas Bronze, Silver e Gold, a avaliação da qualidade dos dados e a análise da evolução das ocorrências, dos principais agentes causadores e das características associadas aos eventos Alto/Crítico.
+A análise tem caráter exploratório e descritivo, com foco em gerar informações que possam apoiar a prevenção e a gestão da segurança.
 
 ### 1.2. Perguntas do Negócio
 
