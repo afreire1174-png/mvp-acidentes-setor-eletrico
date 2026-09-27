@@ -62,32 +62,25 @@ caracteriza, isoladamente, anonimização da base.
 
 ### 3.1 Estrutura e definição do modelo de dados
 
-Neste MVP, foi adotado o modelo de tabela única desnormalizada (flat table), tendo como referência a versão
-`BD_Acidentes_com_id_sem_chave_v2.xlsx`, resultante da criação do identificador técnico `id_registro` e da exclusão da coluna `Chave`.
+Neste MVP, foi adotado o modelo de tabela única desnormalizada (flat table), tendo como referência a versão preparada para análise, com substituição da coluna `Chave` pelo identificador técnico `id_registro`.
 
-Essa versão contém 1.718 registros e 23 colunas, referentes ao
-período de 2020 a 2025. Os atributos de caracterização, localização,
-tempo, vínculo e consequências das ocorrências estão reunidos
-na mesma estrutura, permitindo consultas e agregações sem
-necessidade de junções entre tabelas.
+Essa versão contém 1.718 registros e 23 colunas, referentes ao período de 2020 a 2025. Os atributos de caracterização, localização, tempo, vínculo e consequências das ocorrências estão reunidos na mesma estrutura, permitindo consultas e agregações sem necessidade de junções entre tabelas.
 
-A tabela analítica final foi implementada na camada Gold e utilizada nas análises das perguntas de negócio.
+A granularidade corresponde a uma linha por registro de segurança. O campo `id_registro`, gerado como identificador técnico, apresentou 1.718 valores distintos e nenhum valor ausente. A coluna original `Chave` foi excluída da versão analítica.
 
-A granularidade corresponde a uma linha por registro de segurança. O campo `id_registro`, gerado como UUID e persistido na versão
-preparada para análise, apresentou 1.718 valores distintos e nenhum valor ausente. A coluna `Chave` foi excluída dessa versão, permanecendo
-na entrada preservada na Bronze.
+A unicidade do `id_registro` permite distinguir as linhas da tabela, mas não comprova que cada registro represente um acidente distinto. Por esse motivo, os totais apresentados no MVP são interpretados como quantidades de registros de segurança.
 
-A unicidade do identificador não comprova que cada linha represente um acidente distinto. Portanto, os totais serão interpretados como
-quantidades de registros.
+A escolha pelo modelo flat considera o volume de dados, o tempo disponível para desenvolvimento e os objetivos analíticos do projeto. Essa estrutura permite avaliar a distribuição dos registros por período, classificação, grau de risco, segmento, estado/local e agente causador, além de analisar características dos eventos Alto/Crítico e dos acidentes fatais.
 
-A escolha pelo modelo flat considera o volume de dados e os objetivos analíticos do projeto. A estrutura permite avaliar a distribuição dos registros por período, classificação, gravidade, segmento, estado, categoria de local e agente causador, além de comparar as características dos registros fatais com as demais ocorrências. Nesse modelo, não há separação em tabelas fato e dimensão nem relacionamentos por chaves estrangeiras.
+Nesse modelo, não há separação entre tabelas fato e dimensão nem relacionamentos por chaves estrangeiras. A tabela analítica final foi implementada na camada Gold como:
 
-Para implementação no Databricks, propõe-se a tabela acidentes analíticos, com tipos de dados definidos conforme o significado dos campos. Ano, Mês e Potencial devem ser representados como números inteiros. Os demais campos devem ser inicialmente armazenados como texto, incluindo Hora, que contém faixas horárias, e Tempo de Empresa, que apresenta intervalos e descrições de duração. A tabela analítica final está prevista como `workspace.mvp_gold.acidentes`. Os tipos apresentados no dicionário são propostos para a estrutura analítica. Na Bronze,
-todos os campos foram armazenados como STRING; as conversões e validações dos campos utilizados nas análises foram realizadas na camada Silver.
+`workspace.mvp_gold.acidentes`
 
-A análise temporal deve respeitar o detalhamento disponível na fonte. Como a planilha não contém a data completa das ocorrências, as séries temporais serão organizadas por ano e mês. Os campos Dia da Semana e Hora permitem análises complementares de distribuição, mas não possibilitam reconstruir a data exata dos eventos.
+Os dados foram organizados nas camadas Bronze, Silver e Gold. A camada Bronze preserva os registros recebidos, a Silver concentra os tratamentos de qualidade e padronização, e a Gold disponibiliza a base consolidada utilizada nas consultas e análises das perguntas de negócio.
 
-A identificação dos registros fatais será baseada no campo Classificação, considerando as categorias Fatalidade e Fatalidade Trajeto. O campo Gravidade, por representar níveis de gravidade que não correspondem diretamente à fatalidade, não será utilizado isoladamente para essa identificação. Propõe-se a criação de um indicador derivado que diferencie registros fatais, demais classificações reconhecidas e situações com classificação ausente ou não reconhecida.
+Os campos temporais `ano` e `mes` foram utilizados nas análises de evolução das ocorrências. Na camada Gold também foi criado o atributo derivado `ano_mes`, utilizado para organizar cronologicamente a análise mensal.
+
+A identificação dos registros fatais foi realizada a partir do campo `classificacao`, considerando as categorias `Fatalidade` e `Fatalidade Trajeto`. O campo `gravidade` não foi utilizado isoladamente para essa identificação, por representar uma classificação distinta da ocorrência.
 
 ### 3.2 Catálogo e dicionário de dados
 
