@@ -12,11 +12,21 @@ O objetivo deste MVP é descrever a distribuição das ocorrências registradas 
 
 ### 1.2. Perguntas do Negócio
 
-  • Quantas ocorrências estão registradas e como se distribuem por gravidade e ao longo do tempo?
-  • Em quais locais, atividades ou categorias disponíveis na base há maior concentração de ocorrências?
-  • Qual é a proporção de acidentes fatais no conjunto de registros?
-  • Quais características são mais frequentes nos acidentes fatais e como sua distribuição difere da observada nas demais ocorrências?
-  • Há padrões recorrentes que possam orientar investigações e ações de prevenção?
+  1.1 Quantas ocorrências estão registradas na base e como
+    elas se distribuem por gravidade?
+
+  1.2 Como as ocorrências evoluem ao longo dos anos e meses?
+
+  1.3 Quais agentes causadores apresentam maior número de
+    ocorrências e quais estão mais associados aos eventos
+    de maior grau de risco, classificados como Alto ou Crítico?
+
+  1.4 Quais características e combinações de fatores aparecem
+    com maior frequência nos eventos de maior grau de risco, classificados
+    como Alto ou Crítico, e nos acidentes fatais, considerando segmento,
+    estado/local e aspectos temporais?
+
+  1.5 Síntese das respostas às perguntas de negócio
 
 ## 2. Coleta de Dados
 
