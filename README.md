@@ -17,16 +17,16 @@ A análise tem caráter exploratório e descritivo, com foco em gerar informaç�
 
 ### 1.2. Perguntas de Negócio
 
-      1.1 Quantas ocorrências estão registradas na base e como elas se distribuem por gravidade?
+      a) Quantas ocorrências estão registradas na base e como elas se distribuem por gravidade?
 
-      1.2 Como as ocorrências evoluem ao longo dos anos e dos meses?
+      b) Como as ocorrências evoluem ao longo dos anos e dos meses?
 
-      1.3 Quais agentes causadores apresentam maior número de ocorrências e quais estão mais associados aos eventos de maior grau de risco, classificados como Alto ou Crítico?
+      c) Quais agentes causadores apresentam maior número de ocorrências e quais estão mais associados aos eventos de maior grau de risco, classificados como Alto ou Crítico?
 
-      1.4 Quais características e combinações de fatores aparecem com maior frequência nos eventos de maior grau de risco, classificados como Alto ou Crítico, e nos acidentes fatais,     
+      d) Quais características e combinações de fatores aparecem com maior frequência nos eventos de maior grau de risco, classificados como Alto ou Crítico, e nos acidentes fatais,     
           considerando segmento, estado/local e agente causador?
           
-      1.5 Síntese das respostas às perguntas de negócio
+      e) Síntese das respostas às perguntas de negócio
 
 ## 2. Coleta de Dados
 
@@ -71,8 +71,7 @@ tempo, vínculo e consequências das ocorrências estão reunidos
 na mesma estrutura, permitindo consultas e agregações sem
 necessidade de junções entre tabelas.
 
-A implementação da tabela analítica final na camada Gold permanece
-prevista para as etapas seguintes do pipeline.
+A tabela analítica final foi implementada na camada Gold e utilizada nas análises das perguntas de negócio.
 
 A granularidade corresponde a uma linha por registro de segurança. O campo `id_registro`, gerado como UUID e persistido na versão
 preparada para análise, apresentou 1.718 valores distintos e nenhum valor ausente. A coluna `Chave` foi excluída dessa versão, permanecendo
@@ -83,8 +82,8 @@ quantidades de registros.
 
 A escolha pelo modelo flat considera o volume de dados e os objetivos analíticos do projeto. A estrutura permite avaliar a distribuição dos registros por período, classificação, gravidade, segmento, estado, categoria de local e agente causador, além de comparar as características dos registros fatais com as demais ocorrências. Nesse modelo, não há separação em tabelas fato e dimensão nem relacionamentos por chaves estrangeiras.
 
-Para implementação no Databricks, propõe-se a tabela acidentes analíticos, com tipos de dados definidos conforme o significado dos campos. Ano, Mês e Potencial devem ser representados como números inteiros. Os demais campos devem ser inicialmente armazenados como texto, incluindo Hora, que contém faixas horárias, e Tempo de Empresa, que apresenta intervalos e descrições de duração. A tabela analítica final está prevista como `workspace.mvp_gold.acidentes_analiticos`. Os tipos apresentados no dicionário são propostos para a estrutura analítica. Na Bronze,
-todos os campos foram armazenados como STRING; as conversões de Ano, Mês e Potencial para inteiros serão avaliadas na Silver.
+Para implementação no Databricks, propõe-se a tabela acidentes analíticos, com tipos de dados definidos conforme o significado dos campos. Ano, Mês e Potencial devem ser representados como números inteiros. Os demais campos devem ser inicialmente armazenados como texto, incluindo Hora, que contém faixas horárias, e Tempo de Empresa, que apresenta intervalos e descrições de duração. A tabela analítica final está prevista como `workspace.mvp_gold.acidentes`. Os tipos apresentados no dicionário são propostos para a estrutura analítica. Na Bronze,
+todos os campos foram armazenados como STRING; as conversões e validações dos campos utilizados nas análises foram realizadas na camada Silver.
 
 A análise temporal deve respeitar o detalhamento disponível na fonte. Como a planilha não contém a data completa das ocorrências, as séries temporais serão organizadas por ano e mês. Os campos Dia da Semana e Hora permitem análises complementares de distribuição, mas não possibilitam reconstruir a data exata dos eventos.
 
@@ -161,8 +160,6 @@ A aba `Acidentes` foi lida em Python utilizando as bibliotecas `pandas` e `openp
 | Aba utilizada | `Acidentes` |
 
 A versão preparada para análise preserva os registros necessários às perguntas de negócio e não disponibiliza publicamente a base corporativa original.
-
-### 4.3 Carga da camada Bronze
 
 ### 4.3 Carga da camada Bronze
 
