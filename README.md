@@ -130,6 +130,14 @@ O pipeline de dados foi estruturado segundo a arquitetura medalhão, organizando
 
 As três camadas foram implementadas no Databricks, utilizando tabelas Delta no catálogo `workspace`, nos schemas `mvp_bronze`, `mvp_silver` e `mvp_gold`.
 
+#### Modelagem e catálogo de dados no Databricks
+
+A estrutura abaixo evidencia a organização do catálogo `workspace`, com os schemas correspondentes às camadas Bronze, Silver e Gold e suas respectivas tabelas persistidas no Databricks.
+
+![Modelagem e catálogo de dados no Databricks](imagens/catalogo_modelagem_databricks.png)
+
+*Figura 1 — Estrutura do catálogo de dados no Databricks, mostrando os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold` e suas respectivas tabelas persistidas.*
+
 O fluxo adotado permite acompanhar os dados desde a ingestão do arquivo de entrada até a disponibilização da tabela analítica utilizada nas consultas, tabelas e gráficos apresentados no projeto.
 
 Na camada Gold foi mantido o modelo de tabela única desnormalizada (flat), adequado ao volume de dados e ao escopo analítico deste MVP.
