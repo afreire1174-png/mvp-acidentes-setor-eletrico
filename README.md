@@ -277,82 +277,112 @@ Após a implementação das três camadas, foi realizada a comparação da quant
 
 A igualdade na quantidade de registros entre as três camadas confirma que o processamento preservou as linhas da base durante as etapas de tratamento e preparação para análise.
 
-### 5.2 Consistência
+### 5.2 Completude dos dados
 
-A avaliação inicial identificou diferenças de preenchimento que podem fragmentar categorias equivalentes e afetar os agrupamentos analíticos.
+A completude foi avaliada por meio da contagem de valores nulos presentes na camada Silver após os tratamentos de limpeza.
 
-O campo Dia da Semana apresentou 18 valores distintos, embora seu domínio esperado corresponda aos sete dias da semana. Foram observadas variações
-de espaços, grafia e acentuação. Hora apresentou 30 valores distintos, incluindo diferenças de formatação das faixas horárias.
+As principais ocorrências de valores ausentes foram:
 
-Também foram identificadas variações de espaços em Segmento e Grau de Risco. No campo Gravidade, além de Baixo, Médio e Alto, foram observados
-os valores “-” e “16”, que exigem validação antes de qualquer correção.
+| Campo | Valores nulos |
+|---|---:|
+| Parte do Corpo Atingida | 627 |
+| Gravidade | 487 |
+| Tipo de Lesão | 342 |
+| Agente Causador | 332 |
+| Tempo de Empresa | 150 |
+| Sexo | 86 |
+| Local | 45 |
+| Organização do Trabalho | 29 |
+| Empregado | 1 |
 
-O campo Tempo de Empresa combina faixas de duração com descrições pontuais, demandando critérios para eventual uniformização. Marcadores
-como “D” e “NA” também precisam ter seus significados esclarecidos.
+Os maiores volumes de valores ausentes foram identificados nos campos relacionados às consequências das ocorrências, principalmente Parte do Corpo Atingida, Gravidade e Tipo de Lesão.
 
-Esses resultados constituem um diagnóstico. A padronização das categorias e a validação das relações entre campos ainda não foram concluídas.
+Essas ausências não representam necessariamente erros de preenchimento, pois determinados campos podem não ser aplicáveis em registros como quase-acidentes e desvios críticos.
 
-### 5.3 Unicidade
+Por esse motivo, os valores nulos foram preservados, evitando a criação artificial de informações não existentes na fonte.
 
-O campo `id_registro` apresentou 1.718 valores distintos e nenhum valor ausente, confirmando a unicidade dos identificadores das linhas na
-versão analisada.
+### 5.3 Verificação de duplicidades
 
-Esse resultado decorre da atribuição de um UUID a cada registro e não comprova a ausência de duplicidades de conteúdo. Registros diferentes
-podem apresentar informações semelhantes ou estar associados ao mesmo evento.
+Foi realizada uma verificação de possíveis registros duplicados na base tratada.
 
-A identificação de acidentes distintos depende de uma chave de evento ou de critérios validados com a fonte. Portanto, as contagens da base
-representam registros de segurança, e não necessariamente acidentes distintos ou pessoas envolvidas.
+A análise considerou a estrutura dos registros disponíveis e teve como objetivo identificar linhas repetidas que pudessem distorcer as análises.
 
-### 5.4 Acurácia
+A verificação não resultou em exclusão automática de registros, pois ocorrências semelhantes podem representar eventos distintos e a identificação de duplicidades reais depende de critérios de negócio adicionais.
 
-A acurácia corresponde à correspondência entre os dados registrados e os fatos que representam. O perfilamento realizado permite identificar
-problemas de preenchimento e valores potencialmente inconsistentes, mas não comprova a exatidão factual das informações.
+Dessa forma, os registros foram preservados e as contagens do MVP representam registros de segurança presentes na base.
 
-Não foi realizada conferência sistemática com documentos de origem, relatórios de investigação ou responsáveis pelos registros. Dessa forma, a acurácia factual dos registros não foi confirmada por validação independente.
+### 5.4 Consistência dos campos categóricos
 
-Para os indicadores de fatalidade, foi estabelecido que a identificação deve utilizar as categorias Fatalidade e Fatalidade Trajeto do campo
-Classificação. O campo Gravidade não deve ser utilizado isoladamente para essa finalidade, pois a categoria Alto também ocorre em registros
-não classificados como fatais.
+Também foram avaliados os valores presentes nos principais campos categóricos utilizados nas análises.
 
-Os resultados analíticos deverão ser interpretados conforme as classificações registradas, sem pressupor validação independente dos fatos.
+Durante o perfilamento foram identificadas diferenças de grafia, acentuação, espaços excedentes e marcadores que poderiam fragmentar categorias equivalentes.
 
-### 5.5 Outliers
+Entre os casos observados destacaram-se:
 
-Não foi realizada, nesta etapa, uma análise estatística específica de valores extremos. A base é predominantemente categórica, e valores ou
-categorias pouco frequentes não devem ser classificados automaticamente como erros.
+- diferenças de preenchimento em `dia_da_semana`;
+- variações de grafia em campos como `local`;
+- marcadores como `NA`, `N/A` e `-`;
+- presença do valor `16` no campo `gravidade`;
+- código `D` em determinados campos categóricos;
+- diferenças de preenchimento em campos como `segmento` e `grau_de_risco`.
 
-O campo Potencial apresentou 24 valores distintos, entre 1 e 25.
-A avaliação de valores atípicos nesse campo depende do conhecimento da escala utilizada e de seus limites admissíveis. Caso represente uma
-escala ordinal ou um código, métodos estatísticos destinados a medidas contínuas podem não ser apropriados.
+Na camada Silver foram removidos espaços excedentes e strings vazias foram convertidas para valores nulos. Valores cujo significado não pôde ser confirmado foram preservados, evitando alterações sem respaldo nas regras da fonte.
 
-O valor “16” no campo Gravidade constitui uma inconsistência de domínio a investigar, e não um outlier estatístico confirmado.
+### 5.5 Consistência temporal
 
-Nenhum registro foi excluído por apresentar valor extremo ou categoria rara. As fatalidades, embora pouco frequentes, são relevantes para as
-perguntas de negócio e devem ser preservadas na análise.
+Os campos utilizados nas análises temporais também foram verificados quanto à consistência.
 
-### 5.6 Tratamentos realizados
+Foram avaliados os valores mínimos e máximos de `ano` e `mes`, bem como a presença de meses fora do intervalo esperado de 1 a 12.
 
-Até esta etapa, foram realizadas as seguintes operações:
+A base analisada contempla registros entre 2020 e 2025 e os campos temporais foram utilizados posteriormente para a criação do atributo derivado `ano_mes` na camada Gold.
 
-| Operação | Finalidade | Resultado |
-|---|---:|---:|
-| Criação de `id_registro` | Identificar cada linha por um código independente dos atributos originais. | 1.718 UUIDs distintos e nenhum valor ausente. |
-| Exclusão de `Chave` da versão analítica | Retirar o identificador original dessa versão. | A base permaneceu com 23 colunas após a substituição. |
-| Gravação e releitura da nova planilha | Persistir os identificadores e conferir sua preservação. | Versão salva e conferida, com 1.718 registros. |
-| Reconhecimento de textos compostos apenas por espaços como ausentes | Evitar subestimação de valores ausentes no perfilamento. | Regra aplicada somente à cópia em memória utilizada na avaliação, sem alteração do arquivo de origem.|
+Essa verificação permitiu confirmar a utilização dos campos temporais nas análises de evolução anual e mensal apresentadas nas perguntas de negócio.
 
-A versão resultante foi salva como `BD_Acidentes_com_id_sem_chave_v2.xlsx`. Nas etapas seguintes, esse arquivo será utilizado para preservar os identificadores já atribuídos.
+### 5.6 Unicidade e identificação dos registros
 
-Não foram executadas, no fluxo documentado até aqui, a imputação de valores ausentes, a exclusão de duplicidades de conteúdo, a padronização
-completa das categorias ou a remoção de outliers. Essas ações dependerão de regras justificadas e deverão ser acompanhadas de nova avaliação
-da qualidade.
+A identificação dos registros foi verificada por meio do campo `id_registro`, utilizado como identificador técnico da base.
 
-A etapa atual corresponde ao diagnóstico inicial da versão Excel. A tabela Bronze já foi carregada em formato Delta, mas seu perfilamento
-direto e a validação dos tratamentos da Silver ainda serão realizados.
+Esse identificador foi criado para distinguir individualmente as linhas sem utilizar diretamente atributos pessoais dos registros.
 
-A conclusão da avaliação de qualidade compreenderá a definição das regras para os campos utilizados nas análises, a investigação de
-possíveis duplicidades de conteúdo e a comparação dos indicadores antes e depois dos tratamentos. As alterações e as decisões de manter
-valores sem correção deverão ser justificadas e documentadas.
+A verificação confirmou 1.718 valores distintos em `id_registro` e nenhum valor ausente, indicando consistência no preenchimento e unicidade do identificador técnico.
+
+A unicidade de `id_registro` permite distinguir as linhas da tabela, mas não significa necessariamente que cada registro represente um acidente distinto, pois um mesmo evento pode estar associado a mais de um registro.
+
+Por esse motivo, os resultados do MVP são interpretados como quantidades de registros de segurança.
+
+### 5.7 Acurácia e limitações dos dados
+
+As verificações realizadas permitem identificar problemas de preenchimento, ausência de dados e possíveis inconsistências, mas não comprovam a exatidão factual das informações registradas.
+
+Não foi realizada validação sistemática com documentos de origem, relatórios de investigação ou responsáveis pelos registros. Dessa forma, as análises refletem os dados disponíveis na base.
+
+Para a identificação das fatalidades, foram utilizadas as categorias registradas no campo `classificacao`, especialmente `Fatalidade` e `Fatalidade Trajeto`.
+
+O campo `gravidade` não foi utilizado isoladamente para identificar fatalidades, pois representa uma classificação distinta do tipo de ocorrência.
+
+Essas limitações devem ser consideradas na interpretação dos resultados do MVP.
+
+### 5.8 Tratamentos realizados
+
+Durante a preparação dos dados foram realizados tratamentos destinados a melhorar a qualidade da base e prepará-la para análise.
+
+| Tratamento | Finalidade |
+|---|---|
+| Padronização dos nomes das colunas | Facilitar o processamento no Databricks |
+| Remoção de espaços excedentes | Evitar diferenças artificiais entre categorias |
+| Conversão de strings vazias em `NULL` | Padronizar valores ausentes |
+| Verificação de duplicidades | Identificar possíveis repetições de registros |
+| Avaliação de campos categóricos | Identificar diferenças de grafia, marcadores e valores inconsistentes |
+| Verificação dos campos temporais | Confirmar a consistência dos campos `ano` e `mes` |
+| Validação do campo `id_registro` | Verificar o preenchimento e a unicidade do identificador técnico |
+| Conferência Bronze × Silver × Gold | Garantir a manutenção dos registros durante o pipeline |
+
+A validação do campo `id_registro` confirmou 1.718 valores distintos e nenhum valor ausente, demonstrando a consistência do identificador técnico utilizado na base.
+
+Os tratamentos foram aplicados de forma conservadora. Valores cujo significado não pôde ser confirmado foram mantidos, evitando alterações que pudessem modificar indevidamente o conteúdo da fonte.
+
+Após os tratamentos, a base preparada na camada Gold foi utilizada nas análises das perguntas de negócio.
+
 
 
 ## 6. Análise das Perguntas de Negócio
