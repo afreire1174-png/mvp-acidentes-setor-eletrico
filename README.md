@@ -161,170 +161,121 @@ A aba `Acidentes` foi lida em Python utilizando as bibliotecas `pandas` e `openp
 | Aba utilizada | `Acidentes` |
 
 A versão preparada para análise preserva os registros necessários às perguntas de negócio e não disponibiliza publicamente a base corporativa original.
+
 ### 4.3 Carga da camada Bronze
 
-A partir do arquivo apresentado no item 4.2, foi preparada a rotina
-de carga da tabela Delta `workspace.mvp_bronze.acidentes`.
+### 4.3 Carga da camada Bronze
 
-A preparação técnica normaliza os nomes das colunas e define todos
-os campos como STRING, preservando o conteúdo recebido para os
-tratamentos posteriores. A rotina verifica a existência da tabela
-antes da gravação, evitando sua sobrescrita.
+A partir do arquivo de entrada, os dados foram carregados na tabela Delta:
 
-A validação da carga compara a quantidade de registros e a estrutura
-das colunas com os dados de entrada e verifica o formato Delta.
+`workspace.mvp_bronze.acidentes`
 
-A carga foi concluída e a consulta à tabela confirmou os seguintes
-resultados:
+Nesta etapa foram realizados ajustes técnicos nos nomes das colunas para facilitar sua utilização no Databricks, preservando o conteúdo recebido para os tratamentos posteriores.
 
-| Verificação | Resultado obtido |
+A camada Bronze representa, portanto, o ponto inicial do pipeline e permite manter a rastreabilidade dos registros antes das transformações realizadas na Silver.
+
+A validação da carga apresentou os seguintes resultados:
+
+| Verificação | Resultado |
 |---|---|
 | Tabela | `workspace.mvp_bronze.acidentes` |
 | Registros | 1.718 |
 | Colunas | 23 |
 | Formato | Delta |
 
-#### Amostra dos dados carregados na Bronze
+Também foi visualizada uma amostra dos registros no notebook para conferir a estrutura e o carregamento dos dados.
 
-Após a persistência da tabela, foi realizada a visualização de uma
-amostra de 10 registros da camada Bronze, com o objetivo de verificar
-visualmente se os dados foram carregados corretamente e se a estrutura
-das colunas foi preservada após a ingestão.
+### 4.4 Transformação e criação da camada Silver
 
-A consulta utilizada foi:
+A camada Silver foi criada a partir dos dados armazenados na Bronze, com o objetivo de melhorar a qualidade e a consistência da base antes das análises.
 
-```python
-display(
-    spark.table("workspace.mvp_bronze.acidentes")
-         .limit(10)
-)
+Entre os principais tratamentos realizados estão:
 
-### 4.4 Criação do identificador técnico e exclusão da chave original
+- remoção de espaços excedentes nos campos textuais;
+- transformação de strings vazias em valores nulos;
+- verificação e tratamento dos campos utilizados nas análises temporais;
+- avaliação de possíveis registros duplicados;
+- verificação dos valores presentes nas principais variáveis categóricas;
+- identificação de valores inconsistentes ou que exigem atenção durante a interpretação dos resultados.
 
-Antes da implementação da tabela Bronze, foi preparada uma cópia Excel com o identificador `id_registro` e sem a coluna `Chave`.
-Essa versão foi utilizada no perfilamento inicial. Os identificadores persistidos deverão ser preservados na implementação da Silver,
-cuja vinculação aos registros da Bronze ainda precisa ser definida e validada.
+Após os tratamentos, os dados foram persistidos em formato Delta na tabela:
 
-Foi criado o campo `id_registro`, composto por um UUID aleatório para cada linha. Esse identificador é independente dos atributos da fonte
-e permite identificar os registros sem incorporar informações pessoais em sua composição.
+`workspace.mvp_silver.acidentes`
 
-A coluna original `Chave` foi excluída da versão analítica. O arquivo de origem foi preservado, e a transformação não alterou a quantidade
-de registros.
+A conferência entre as camadas Bronze e Silver confirmou a manutenção dos 1.718 registros, permitindo preservar a rastreabilidade do processamento.
 
-Os identificadores foram gerados uma única vez e persistidos na nova versão. Nas execuções posteriores, a versão salva deve ser carregada
-para evitar a atribuição de novos códigos às mesmas linhas.
+### 4.5 Criação da camada Gold
 
-### 4.5 Persistência e validação da versão resultante
+A camada Gold foi criada a partir da base tratada na Silver e representa a estrutura utilizada diretamente nas análises das perguntas de negócio.
 
-Durante a execução, a gravação direta do Excel no Volume apresentou erro de entrada e saída. A persistência foi realizada pela criação
-do arquivo em armazenamento temporário local, seguida de sua cópia para o Volume.
+Para este MVP foi mantido o modelo de tabela única desnormalizada (flat), considerado suficiente para o volume de dados e para as consultas analíticas propostas.
 
-Após a gravação, o arquivo foi relido para verificar a quantidade de linhas e colunas, a preservação dos identificadores e a ausência da
-coluna `Chave`.
+Também foi criado o atributo derivado `ano_mes`, permitindo organizar as ocorrências de forma cronológica nas análises mensais.
 
-**Resultado obtido:**
-```text
-Arquivo existente carregado. IDs preservados.
-Registros: 1718
-Colunas: 23
-IDs únicos: 1718
-Coluna Chave presente: False
-```
+A tabela final foi persistida em formato Delta como:
 
-O procedimento reutiliza o arquivo de destino quando ele já existe.
-Essa lógica preserva os IDs, mas não implementa a incorporação automática de novos registros ou de alterações posteriores na fonte.
+`workspace.mvp_gold.acidentes`
 
-### 4.6 Resultados da transformação
+A camada Gold mantém os 1.718 registros e concentra os atributos necessários para as agregações, consultas e visualizações apresentadas na seção de análise das perguntas de negócio.
 
-As verificações realizadas no Databricks, por meio do código
-apresentado na seção 4.4, produziram os seguintes resultados:
+### 4.6 Validação do pipeline Bronze × Silver × Gold
 
-**Resultado obtido:**
+Após a implementação das três camadas, foram realizadas verificações para confirmar a consistência do fluxo de processamento.
 
-| Verificação | Resultado |
+A quantidade de registros foi comparada entre Bronze, Silver e Gold:
+
+| Camada | Quantidade de registros |
 |---|---:|
-| Quantidade de registros | 1.718 |
-| Quantidade de colunas | 23 |
-| Identificadores distintos em `id_registro` | 1.718 |
-| Valores ausentes em `id_registro` | 0 |
-| Presença da coluna `Chave` | Não |
+| Bronze | 1.718 |
+| Silver | 1.718 |
+| Gold | 1.718 |
 
-A substituição de `Chave` por `id_registro` preservou a quantidade
-de registros e de colunas da base. Os identificadores gerados
-são únicos e não apresentam valores ausentes.
+A manutenção da quantidade de registros ao longo das camadas demonstra que os tratamentos aplicados não provocaram perda de linhas durante o processamento.
 
-A unicidade de `id_registro` permite distinguir as linhas, mas
-não comprova a ausência de duplicidades de conteúdo nem assegura
-que cada registro corresponda a um acidente distinto.
+Também foram realizadas verificações de valores nulos, duplicidades, categorias, consistência temporal e identificação dos registros, cujos resultados são apresentados na seção **5 — Qualidade dos Dados**.
 
-A versão resultante foi armazenada no arquivo
-`/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_com_id_sem_chave_v2.xlsx`.
+### 4.7 Encadeamento das etapas do pipeline
 
-Nas execuções seguintes, o procedimento reutiliza esse arquivo e preserva os identificadores já atribuídos.
+O fluxo implementado no MVP compreendeu as seguintes etapas:
 
-### 4.7 Encadeamento das etapas e escopo implementado
-
-O fluxo executado compreendeu:
-
-1. Upload da planilha BD_Acidentes_tratada_v3.xlsx para o Volume.
-2. Leitura e conferência da aba Acidentes.
+1. Upload da planilha de entrada para o Volume do Databricks.
+2. Leitura e conferência dos dados.
 3. Padronização técnica dos nomes das colunas.
-4. Carga e validação da tabela Bronze em formato Delta.
-5. Criação do identificador técnico id_registro na versão preparada para análise.
-6. Exclusão da coluna Chave dessa versão.
-7. Persistência e conferência de BD_Acidentes_com_id_sem_chave_v2.xlsx.
-8. Releitura da versão salva.
-9. Perfilamento inicial da qualidade dos dados.
+4. Criação e persistência da camada Bronze em formato Delta.
+5. Leitura da Bronze e aplicação dos tratamentos de qualidade.
+6. Padronização de campos textuais e tratamento de valores vazios.
+7. Verificação de duplicidades, categorias e campos utilizados nas análises.
+8. Persistência da camada Silver em formato Delta.
+9. Criação da camada Gold no modelo flat.
+10. Criação do atributo derivado `ano_mes`.
+11. Persistência da tabela Gold.
+12. Conferência da quantidade de registros entre Bronze, Silver e Gold.
+13. Utilização da camada Gold nas consultas, tabelas e gráficos das perguntas de negócio.
 
-O diagnóstico de valores ausentes, tipos de dados e valores distintos é apresentado na seção Qualidade de Dados.
+O pipeline implementado permite, dessa forma, acompanhar a evolução dos dados desde a ingestão até sua disponibilização para análise.
 
-Até esta etapa, o fluxo utiliza arquivos Excel armazenados em um Volume.
-A camada Bronze já foi implementada como tabela Delta e validada quanto à quantidade de registros, estrutura e formato de armazenamento. As camadas Silver e Gold, bem como as transformações entre essas etapas, permanecem pendentes de implementação e documentação. Essas etapas deverão ser documentadas conforme forem executadas.
+As verificações específicas relacionadas à qualidade, completude, consistência e unicidade dos dados são apresentadas no item **5 — Qualidade dos Dados**.
 
-A substituição da chave original não conclui a anonimização da base.
-Descrições livres e combinações de atributos ainda requerem avaliação antes de qualquer divulgação. Os arquivos detalhados não integram
-os materiais públicos do projeto.
 
 ## 5. Qualidade de Dados
 
-A avaliação inicial da qualidade foi realizada no Databricks, utilizando Python e pandas, sobre o arquivo
-`BD_Acidentes_com_id_sem_chave_v2.xlsx`, com 1.718 registros e 23 colunas. Foram analisados o preenchimento dos campos,
-os tipos reconhecidos na leitura e a quantidade de valores distintos.
+A qualidade dos dados foi avaliada ao longo do pipeline no Databricks, considerando principalmente a camada Silver e a base consolidada na camada Gold.
 
-Os resultados apresentados correspondem a essa versão Excel. Não representam, ainda, o perfilamento direto da tabela Bronze
-nem a validação de uma camada Silver implementada.
+As verificações tiveram como objetivo identificar problemas de completude, duplicidade, inconsistências em campos categóricos, possíveis valores inválidos, coerência temporal e integridade do identificador dos registros.
 
-### 5.1 Completude dos dados
+Os resultados dessas verificações foram utilizados para avaliar as limitações da base antes da execução das perguntas de negócio.
 
-A completude foi avaliada pela quantidade e pelo percentual de valores ausentes em cada coluna. Células vazias e textos compostos apenas por espaços foram considerados ausentes no perfilamento.
+### 5.1 Conferência entre as camadas Bronze, Silver e Gold
 
-A leitura utilizou o reconhecimento padrão de valores ausentes do pandas. Adicionalmente, textos compostos apenas por espaços foram considerados
-ausentes na cópia de avaliação. Os percentuais refletem esse procedimento, e não necessariamente apenas células fisicamente vazias no Excel.
+Após a implementação das três camadas, foi realizada a comparação da quantidade de registros para verificar se os tratamentos aplicados provocaram perda de dados.
 
-As seguintes colunas apresentaram valores ausentes:
+| Camada | Quantidade de registros |
+|---|---:|
+| Bronze | 1.718 |
+| Silver | 1.718 |
+| Gold | 1.718 |
 
-| Campo | Quantidade de valores ausentes | Percentual de valores ausentes |
-|---|---:|---:|
-| Parte do Corpo Atingida | 637 | 37,08% |
-| Gravidade | 522 | 30,38% |
-| Tipo de Lesão | 351 | 20,43% |
-| Agente Causador | 344 | 20,02% |
-| Tempo de Empresa | 169 | 9,84% |
-| Sexo | 98 | 5,70% |
-| Local | 45 | 2,62% |
-| Organização do trabalho | 29 | 1,69% |
-| Hora | 8 | 0,47% |
-| Dia da Semana | 1 | 0,06% |
-| Empregado | 1 | 0,06% |
-
-Os maiores percentuais de ausência foram identificados em Parte do Corpo Atingida e Gravidade. Essas limitações devem ser consideradas nas análises
-que utilizam tais campos, explicitando a cobertura dos dados disponíveis.
-
-A ausência de informação não representa necessariamente erro. Em quase acidentes e desvios críticos, por exemplo, campos relacionados a lesões
-podem não ser aplicáveis. A distinção entre “não informado” e “não se aplica” depende de regras validadas com a fonte.
-
-As quantidades da tabela não devem ser somadas para determinar o total de registros incompletos, pois uma mesma linha pode apresentar ausência
-em vários campos.
+A igualdade na quantidade de registros entre as três camadas confirma que o processamento preservou as linhas da base durante as etapas de tratamento e preparação para análise.
 
 ### 5.2 Consistência
 
