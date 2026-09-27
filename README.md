@@ -723,7 +723,30 @@ O cruzamento entre **segmento e estado** mostra forte presença do segmento de *
 
 O gráfico evidencia a predominância da **Transmissão** entre as principais combinações de segmento e estado. A **Bahia** também se destaca, aparecendo tanto associada à Transmissão quanto à Geração - Hidráulica e Expansão. Esses resultados indicam as combinações mais frequentes na base, não representando, isoladamente, uma medida de risco relativo.
 
+#### Combinação: Segmento × Local
 
+O cruzamento entre **segmento e local** mostra que as combinações mais frequentes estão fortemente concentradas no segmento de **Transmissão**. Destacam-se **Transmissão | Empresa**, com **59 eventos (17,10%)**, **Transmissão | Via pública**, com **54 (15,65%)**, e **Transmissão | Área rural**, com **37 (10,72%)**.
+
+| Segmento | Local | Quantidade | Percentual |
+|---|---|---:|---:|
+| Transmissão | Empresa | 59 | 17,10% |
+| Transmissão | Via pública | 54 | 15,65% |
+| Transmissão | Área rural | 37 | 10,72% |
+| Expansão | Empresa | 28 | 8,12% |
+| Geração - Hidráulica | Empresa | 26 | 7,54% |
+| CSC | Via pública | 21 | 6,09% |
+| CSC | Empresa | 19 | 5,51% |
+| Expansão | Via pública | 16 | 4,64% |
+| Geração - Hidráulica | Via pública | 16 | 4,64% |
+| Adm | Via pública | 14 | 4,06% |
+
+#### Principais combinações: Segmento × Local
+
+![Principais combinações Segmento x Local](imagens/6_4_4_segmento_local.png)
+
+O gráfico reforça a predominância da **Transmissão** entre as principais combinações, especialmente nos locais **Empresa**, **Via pública** e **Área rural**. Também aparecem com destaque combinações envolvendo **Expansão**, **Geração - Hidráulica** e **CSC**.
+
+Esses resultados indicam os contextos mais frequentes observados na base, sem representar, isoladamente, uma medida de risco relativo.
 
 
 
