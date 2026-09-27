@@ -534,7 +534,69 @@ Para responder a esta pergunta, a análise foi dividida em três etapas compleme
 - **6.3.2 Participação dos principais agentes causadores nos eventos Alto/Crítico**
 - **6.3.3 Análise dos resultados**
 
+### 6.3.1 Distribuição dos eventos Alto/Crítico por agente causador
 
+Para identificar quais agentes causadores aparecem com maior frequência entre os eventos classificados com grau de risco **Alto ou Crítico**, foram considerados apenas os registros pertencentes a essas duas categorias de risco.
+
+Os agentes foram agrupados pela quantidade de eventos e ordenados do maior para o menor, considerando os dez com maior frequência.
+
+| Agente causador | Quantidade de eventos |
+|---|---:|
+| D | 43 |
+| Eletricidade | 40 |
+| Carro - Colisão | 29 |
+| Moto - Queda | 26 |
+| Golpeado por (atingido por objeto em movimento) | 23 |
+| Carro - Capotamento | 22 |
+| Queda com diferença de nível | 16 |
+| Moto - Colisão | 13 |
+| Explosão | 9 |
+| Atingido entre ou abaixo (esmagado ou amputado) | 7 |
+
+![Distribuição dos eventos Alto/Crítico por agente causador](imagens/6_3_1_agentes_alto_critico.png)
+
+#### Análise dos resultados
+
+Os resultados mostram que o código **“D”** apresentou a maior quantidade de eventos Alto/Crítico, com **43 ocorrências**. Conforme a nota explicativa da base de dados utilizada neste trabalho, entretanto, o código **“D”** corresponde a registros em que o agente causador não foi classificado durante o preenchimento, não representando, portanto, um agente causador específico.
+
+Entre os agentes efetivamente identificados, **Eletricidade** apresentou a maior frequência, com **40 ocorrências**, seguida por **Carro - Colisão**, com **29**, e **Moto - Queda**, com **26 eventos**.
+
+Também se destacaram **Golpeado por (atingido por objeto em movimento)**, com **23 ocorrências**, e **Carro - Capotamento**, com **22**.
+
+Os resultados indicam que determinados agentes aparecem com maior recorrência entre os eventos classificados com maior grau de risco. No entanto, a análise representa uma associação por frequência e não permite, isoladamente, estabelecer relação direta de causa e efeito entre o agente causador e o grau de risco.
+
+### 6.3.2 Participação dos principais agentes causadores nos eventos Alto/Crítico
+
+Para complementar a análise anterior, foi calculada a participação percentual dos agentes causadores nos eventos classificados com grau de risco **Alto ou Crítico**.
+
+Conforme a nota explicativa da base de dados, o código **“D”** representa registros cujo agente causador não foi classificado durante o preenchimento. Por esse motivo, esse código foi excluído desta análise, permitindo avaliar apenas os eventos com agente causador efetivamente identificado.
+
+Foram considerados **241 eventos Alto/Crítico com agente causador classificado**.
+
+| Agente causador | Quantidade de eventos | Participação (%) |
+|---|---:|---:|
+| Eletricidade | 40 | 16,60 |
+| Carro - Colisão | 29 | 12,03 |
+| Moto - Queda | 26 | 10,79 |
+| Golpeado por (atingido por objeto em movimento) | 23 | 9,54 |
+| Carro - Capotamento | 22 | 9,13 |
+| Queda com diferença de nível | 16 | 6,64 |
+| Moto - Colisão | 13 | 5,39 |
+| Explosão | 9 | 3,73 |
+| Atingido entre ou abaixo (esmagado ou amputado) | 7 | 2,90 |
+| Animal | 6 | 2,49 |
+
+![Participação dos principais agentes causadores nos eventos Alto/Crítico](imagens/6_3_2_participacao_agentes_alto_critico.png)
+
+#### Análise dos resultados
+
+Entre os agentes causadores efetivamente classificados, **Eletricidade** apresentou a maior participação nos eventos Alto/Crítico, com **40 ocorrências**, correspondendo a **16,60%** do total. Em seguida aparecem **Carro - Colisão**, com **12,03%**, e **Moto - Queda**, com **10,79%**.
+
+Os cinco principais agentes causadores concentram aproximadamente **58,09%** dos eventos analisados. Considerando os dez agentes apresentados na tabela e no gráfico, essa participação alcança aproximadamente **79,24%** do total.
+
+Os resultados indicam uma concentração relevante dos eventos de maior grau de risco em um conjunto relativamente reduzido de agentes causadores, com destaque para **Eletricidade** entre as categorias efetivamente identificadas.
+
+A análise percentual complementa a frequência absoluta apresentada no item 6.3.1, permitindo avaliar a representatividade de cada agente causador no conjunto de eventos Alto/Crítico. Ressalta-se que os resultados representam frequência e associação, não permitindo, isoladamente, estabelecer relação direta de causa e efeito entre o agente causador e o grau de risco.
 
 
 ## 7. Autoavaliação
