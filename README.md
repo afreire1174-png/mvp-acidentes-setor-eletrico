@@ -650,11 +650,51 @@ Para facilitar a visualização, a tabela apresenta os **10 estados com maior n�
 
 Os resultados mostram maior concentração dos eventos Alto/Crítico na **Bahia**, embora os registros estejam distribuídos por diferentes estados, indicando uma dispersão geográfica relevante das ocorrências de maior grau de risco.
 
+#### Distribuição dos eventos Alto/Crítico por local
 
+A análise por local mostra maior concentração dos **345 eventos classificados como Alto ou Crítico** nas categorias **Empresa** e **Via pública**, que juntas representam mais de 80% dos registros analisados.
 
+| Local | Quantidade | Percentual |
+|---|---:|---:|
+| Empresa | 161 | 46,67% |
+| Via pública | 126 | 36,52% |
+| Área rural | 47 | 13,62% |
+| Não informado | 6 | 1,74% |
+| SPE | 3 | 0,87% |
+| Área urbana | 2 | 0,58% |
 
+Os resultados mostram que **Empresa** é o local mais frequente, com **161 ocorrências (46,67%)**, seguido por **Via pública**, com **126 registros (36,52%)**. A categoria **Área rural** aparece em terceiro lugar, com **47 eventos (13,62%)**, enquanto os demais locais apresentam participação reduzida.
+Nota: Para efeito de melhor entendimento, as respostas "null" foram substituídas por "Não informado". 
 
+#### Distribuição dos eventos Alto/Crítico por agente causador
 
+A análise dos agentes causadores permite identificar os fatores mais frequentes entre os **345 eventos classificados como Alto ou Crítico**. Observa-se também uma quantidade relevante de registros sem informação ou classificados como **“D”**, aspecto que deve ser considerado na interpretação dos resultados.
+
+| Agente causador | Quantidade | Percentual |
+|---|---:|---:|
+| Não informado | 57 | 16,52% |
+| D | 43 | 12,46% |
+| Eletricidade | 40 | 11,59% |
+| Carro - Colisão | 29 | 8,41% |
+| Moto - Queda | 26 | 7,54% |
+| Golpeado por (atingido por objeto em movimento) | 23 | 6,67% |
+| Carro - Capotamento | 22 | 6,38% |
+| Queda com diferença de nível | 16 | 4,64% |
+| Moto - Colisão | 13 | 3,77% |
+| Explosão | 9 | 2,61% |
+| Atingido entre ou abaixo (esmagado ou amputado) | 7 | 2,03% |
+| Veículo rodoviário motorizado | 6 | 1,74% |
+| Ferramenta Manual | 6 | 1,74% |
+| Queimadura | 6 | 1,74% |
+| Animal | 6 | 1,74% |
+
+#### Principais agentes causadores dos eventos Alto/Crítico
+
+![Principais agentes causadores dos eventos Alto/Crítico](imagens/6_4_2_agentes_causadores_alto_critico.png)
+
+Entre os agentes claramente identificados, **Eletricidade** apresenta a maior frequência, com **40 eventos (11,59%)**, seguida por ocorrências relacionadas a colisões, quedas e capotamentos de veículos.
+
+Destaca-se, entretanto, a presença de **57 registros não informados (16,52%)** e **43 registros classificados como “D” (12,46%)**. A categoria **“D” foi mantida conforme registrada na base original, por não haver informação suficiente para associá-la a um agente causador específico**. Por esse motivo, tanto os registros não informados quanto a categoria “D” devem ser considerados uma limitação de qualidade dos dados e interpretados com cautela.
 
 
 ## 7. Autoavaliação
