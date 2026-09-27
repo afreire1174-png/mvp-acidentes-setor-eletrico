@@ -496,7 +496,7 @@ O gráfico a seguir apresenta visualmente a evolução anual das ocorrências:
 
 A análise anual fornece uma visão temporal geral do conjunto de dados e serve como referência para as análises seguintes, nas quais serão avaliados aspectos como gravidade, agentes causadores, segmentos, localização e outros fatores relacionados às ocorrências.
 
-#### Análise
+#### Análise dos resultados anuais
 
 A evolução anual mostra crescimento contínuo dos registros de ocorrências ao longo do período analisado, passando de 48 registros em 2020 para 592 em 2025, maior valor da série. Os anos de 2023, 2024 e 2025 concentram aproximadamente 82,4% dos 1.718 registros, indicando maior concentração nos anos mais recentes.
 
@@ -514,7 +514,7 @@ O gráfico mostra que, apesar das variações entre os meses, os maiores volumes
 
 ![Evolução mensal das ocorrências](imagens/6_2_2_evolucao_mensal.png)
 
-#### Análise dos resultados
+#### Análise dos resultados mensais
 
 A análise mensal evidencia oscilações na quantidade de ocorrências registradas ao longo do período estudado, com maior concentração de registros nos anos mais recentes.
 
@@ -602,6 +602,19 @@ Os cinco principais agentes causadores concentram aproximadamente **58,09%** dos
 Os resultados indicam uma concentração relevante dos eventos de maior grau de risco em um conjunto relativamente reduzido de agentes causadores, com destaque para **Eletricidade** entre as categorias efetivamente identificadas.
 
 A análise percentual complementa a frequência absoluta apresentada no item 6.3.1, permitindo avaliar a representatividade de cada agente causador no conjunto de eventos Alto/Crítico. Ressalta-se que os resultados representam frequência e associação, não permitindo, isoladamente, estabelecer relação direta de causa e efeito entre o agente causador e o grau de risco.
+
+
+### 6.4 Características e combinações de fatores nos eventos de maior risco e acidentes fatais
+
+**Pergunta do Negócio:** Quais características e combinações de fatores são mais frequentes nos eventos Alto/Crítico e nos acidentes fatais, considerando segmento, estado/local e agente causador?
+
+Esta análise busca identificar os principais padrões presentes nos eventos classificados com grau de risco **Alto ou Crítico**, bem como nos **acidentes fatais**. Para isso, são considerados atributos como **segmento, estado/local e agente causador**, permitindo avaliar tanto as características mais frequentes de forma individual quanto as principais combinações entre esses fatores.
+
+A análise está organizada nos seguintes subitens:
+
+- **6.4.1 Principais características dos eventos Alto/Crítico**
+- **6.4.2 Combinações de fatores mais frequentes**
+- **6.4.3 Acidentes fatais**
 
 ### 6.4.1 Principais características dos eventos Alto/Crítico
 
@@ -798,6 +811,45 @@ O cruzamento entre **estado e agente causador** apresenta maior dispersão das c
 O gráfico mostra que a combinação **BA | D** apresenta a maior frequência entre os cruzamentos analisados. Também aparecem com destaque ocorrências relacionadas a **capotamentos, colisões e eletricidade**, distribuídas entre diferentes estados.
 
 A presença de registros **não informados** e da categoria **“D”**, mantida conforme registrada na base original, deve ser considerada como limitação de qualidade dos dados. De forma geral, esse cruzamento mostra uma distribuição mais dispersa, sem uma única associação dominante entre estado e agente causador, além da combinação observada na Bahia.
+
+#### Análise dos resultados
+
+A análise das combinações dos 345 eventos Alto/Crítico reforça a predominância do segmento de Transmissão, especialmente nas associações com determinados estados e com os locais Empresa e Via pública. Também aparecem com frequência combinações envolvendo Eletricidade e acidentes com veículos.
+O cruzamento entre estado e agente causador apresenta maior dispersão, com destaque para BA | D. A presença de registros não informados e da categoria “D” limita parte da interpretação e deve ser considerada como aspecto de qualidade dos dados.
+De forma geral, os resultados mostram padrões recorrentes entre segmento, localização e agente causador, mas representam apenas frequências observadas na base e não devem ser interpretados como medida direta de risco relativo.
+
+### 6.4.3 Acidentes fatais
+
+Neste subitem são analisados os registros classificados como **Fatalidade** ou **Fatalidade Trajeto** na coluna `classificacao`. O objetivo é identificar as principais características dos acidentes fatais presentes na base e complementar as análises anteriores dos eventos Alto/Crítico.
+
+Foram identificados **15 acidentes fatais**, sendo **9 classificados como Fatalidade (60%)** e **6 como Fatalidade Trajeto (40%)**.
+
+| Classificação | Quantidade | Percentual |
+|---|---:|---:|
+| Fatalidade | 9 | 60,00% |
+| Fatalidade Trajeto | 6 | 40,00% |
+
+A distribuição mostra predominância dos registros classificados como **Fatalidade**, embora os acidentes de **Fatalidade Trajeto** também representem uma parcela relevante do total de casos fatais analisados.
+
+#### Distribuição dos acidentes fatais por segmento
+
+A análise por segmento mostra que os **15 acidentes fatais** estão concentrados principalmente em **Transmissão** e **CSC**.
+
+| Segmento | Quantidade | Percentual |
+|---|---:|---:|
+| Transmissão | 8 | 53,33% |
+| CSC | 5 | 33,33% |
+| Expansão | 1 | 6,67% |
+| Adm | 1 | 6,67% |
+
+#### Acidentes fatais por segmento
+
+![Acidentes fatais por segmento](imagens/6_4_7_acidentes_fatais_segmento.png)
+
+O gráfico evidencia a predominância do segmento de **Transmissão**, com **8 acidentes fatais (53,33%)**, seguido pelo **CSC**, com **5 registros (33,33%)**. Expansão e Adm apresentam **1 ocorrência cada (6,67%)**.
+
+
+
 
 
 
