@@ -517,6 +517,24 @@ O gráfico mostra que, apesar das variações entre os meses, os volumes mensais
 
 Esses resultados devem ser interpretados como características da base analisada. As diferenças observadas entre os meses não permitem concluir, isoladamente, que houve aumento ou redução real dos acidentes, pois fatores como cobertura dos registros, processo de notificação e disponibilidade histórica dos dados também podem influenciar essa distribuição.
 
+### Síntese da análise temporal
+
+As análises anual e mensal mostram aumento da quantidade de registros ao longo do período analisado, com maior concentração nos anos mais recentes.
+
+Na visão anual, os registros passaram de **48 ocorrências em 2020** para **592 em 2025**, sendo que **2023, 2024 e 2025 concentram aproximadamente 82,4% dos 1.718 registros** da base. Na análise mensal, o maior volume foi observado em **outubro de 2025**, com **68 ocorrências**, enquanto o menor ocorreu em **novembro de 2020**, com **1 ocorrência**.
+
+Em conjunto, os resultados indicam uma concentração crescente de registros ao longo do tempo. Entretanto, esse comportamento deve ser interpretado como uma característica da base analisada, não sendo suficiente, isoladamente, para concluir que houve aumento real dos acidentes, pois fatores relacionados à cobertura, notificação e disponibilidade dos dados também podem influenciar essa distribuição.
+
+
+### 6.3  Quais agentes causadores apresentam maior número de eventos classificados com grau de risco Alto ou Crítico?
+
+Para responder a esta pergunta, a análise foi dividida em três etapas complementares. Primeiro, é apresentada a distribuição dos eventos classificados como Alto ou Crítico por agente causador. Em seguida, é avaliada a participação dos principais agentes no conjunto desses eventos. Por fim, os resultados são interpretados de forma consolidada, destacando os agentes que mais se repetem entre as ocorrências de maior grau de risco.
+
+- **6.3.1 Distribuição dos eventos Alto/Crítico por agente causador**
+- **6.3.2 Participação dos principais agentes causadores nos eventos Alto/Crítico**
+- **6.3.3 Análise dos resultados**
+
+
 
 
 ## 7. Autoavaliação
