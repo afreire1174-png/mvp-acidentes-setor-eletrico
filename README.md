@@ -907,12 +907,26 @@ O gráfico mostra que **Queda com diferença de nível** é o agente causador cl
 
 Também aparecem registros relacionados à **Eletricidade** e a acidentes com veículos. A presença de casos **não informados** e da categoria “D” deve ser considerada como uma limitação de qualidade dos dados na interpretação dos resultados.
 
+#### Análise 6.4.3
+
+Foram identificados **15 acidentes fatais**, sendo **9 classificados como Fatalidade (60%)** e **6 como Fatalidade Trajeto (40%)**. Em relação ao segmento, destaca-se a **Transmissão**, com **8 registros (53,33%)**, seguida pelo **CSC**, com 5 ocorrências.
+
+A distribuição por estado apresenta maior dispersão, enquanto, quanto ao local, destaca-se **Via pública**, com **9 registros (60%)**, seguida por **Empresa**, com 4, e **Área rural**, com 2.
+
+Entre os agentes causadores, **Queda com diferença de nível** apresenta a maior frequência entre os agentes claramente identificados, com **4 registros (26,67%)**. A categoria **“D - categoria não detalhada”** também possui 4 registros, além de **Eletricidade** e **Não informado**, com 2 ocorrências cada.
+
+De forma geral, os acidentes fatais apresentam maior concentração no segmento de **Transmissão** e em **Via pública**. A presença da categoria “D” e de valores não informados deve ser considerada como uma limitação de qualidade dos dados.
 
 
+## 6.5 Síntese das respostas às perguntas de negócio
 
+A análise das características e combinações de fatores dos **345 eventos classificados como Alto ou Crítico** mostrou maior concentração no segmento de **Transmissão**, especialmente em determinados estados e nos locais **Empresa** e **Via pública**.
 
+Nos cruzamentos entre variáveis, a Transmissão permaneceu entre as combinações mais frequentes, principalmente nas associações com estado, local e agente causador. Entre os agentes identificados, destacam-se **Eletricidade** e ocorrências relacionadas a veículos, embora a presença de registros não informados e da categoria **“D”** limite parte da interpretação.
 
+Na análise específica dos **15 acidentes fatais**, houve predominância da classificação **Fatalidade**, com 9 registros, frente a 6 de **Fatalidade Trajeto**. Também se destacaram o segmento de **Transmissão**, as ocorrências em **Via pública** e, entre os agentes claramente identificados, **Queda com diferença de nível**.
 
+De forma geral, o item 6.4 evidencia padrões recorrentes relacionados a **segmento, localização e agente causador**, contribuindo para a caracterização dos eventos de maior severidade presentes na base. Os resultados representam frequências observadas e devem ser interpretados considerando as limitações de qualidade dos dados e a ausência de medidas de exposição que permitam comparar diretamente o risco relativo entre segmentos ou localidades.
 
 
 
