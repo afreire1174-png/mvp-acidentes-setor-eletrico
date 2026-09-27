@@ -932,4 +932,14 @@ De forma geral, o item 6.4 evidencia padrões recorrentes relacionados a **segme
 
 ## 7. Autoavaliação
 
+O desenvolvimento deste MVP permitiu atingir o objetivo proposto de organizar e analisar registros de segurança do setor elétrico, buscando identificar padrões relacionados principalmente às ocorrências de maior risco e aos acidentes fatais.
 
+A utilização do Databricks e da arquitetura medalhão contribuiu para organizar o processo de forma estruturada, desde a entrada dos dados na camada Bronze, passando pelo tratamento e padronização na Silver, até a disponibilização da base preparada para análise na camada Gold. Durante esse processo, também foi possível avaliar a qualidade dos dados e identificar valores nulos, diferenças de preenchimento e inconsistências em alguns campos categóricos, aspectos que precisam ser considerados na interpretação dos resultados.
+
+De forma geral, a base permitiu responder às perguntas de negócio definidas no início do trabalho e realizar análises sobre a evolução das ocorrências ao longo do tempo, grau de risco, agentes causadores, características dos eventos Alto/Crítico e acidentes fatais.
+
+Para este MVP, foi adotado um modelo de dados em tabela flat na camada Gold, principalmente pela simplicidade de implementação e pelo tempo disponível para o desenvolvimento. Esse modelo mostrou-se suficiente para as análises propostas. Como evolução do projeto, poderá ser adotado um modelo dimensional em esquema estrela, com uma tabela fato de ocorrências e dimensões como tempo, localidade, segmento, agente causador e classificação do acidente.
+
+Essa evolução poderá melhorar a organização e a reutilização dos dados, facilitar análises mais detalhadas e ampliar a capacidade de comparação entre diferentes características das ocorrências.
+
+Como próximos passos, também podem ser considerados o aprimoramento da padronização dos dados, o tratamento mais completo dos registros incompletos, a ampliação da série histórica e o desenvolvimento de indicadores e dashboards para acompanhamento dos eventos de maior risco. Dessa forma, o projeto poderá evoluir de uma análise exploratória para uma solução mais estruturada de apoio à gestão da segurança.
