@@ -455,6 +455,42 @@ Os eventos classificados como **Alto** representam 303 ocorrências (17,64%), en
 Os resultados mostram predominância dos graus Médio e Baixo, que juntos representam **79,92%** das ocorrências. Entretanto, a participação dos eventos Alto e Crítico reforça a importância de aprofundar as análises sobre os fatores associados às ocorrências de maior grau de risco.
 
 
+### 6.2  Como as ocorrências evoluem ao longo dos anos e dos meses?
+
+A avaliação temporal foi dividida em duas perspectivas:
+
+- **6.2.1 Evolução anual**, permitindo observar o comportamento das ocorrências entre os diferentes anos;
+- **6.2.2 Evolução mensal**, permitindo uma análise mais detalhada da variação das ocorrências ao longo dos meses.
+
+### 6.2.1 Evolução anual das ocorrências
+
+A evolução anual das ocorrências foi analisada a partir do agrupamento dos registros pelo campo `ano`, utilizando os dados disponíveis na camada Gold.
+
+Foram considerados os **1.718 registros** da base. A distribuição anual encontrada foi:
+
+| Ano | Quantidade de ocorrências |
+|---|---:|
+| 2020 | 48 |
+| 2021 | 91 |
+| 2022 | 164 |
+| 2023 | 338 |
+| 2024 | 485 |
+| 2025 | 592 |
+
+Os resultados mostram um crescimento contínuo da quantidade de ocorrências registradas ao longo do período analisado. O menor número de registros foi observado em **2020**, com **48 ocorrências**, enquanto **2025** apresentou o maior valor da série, com **592 ocorrências**.
+
+Em termos de participação no total da base, **2025 representa aproximadamente 34,5% dos registros**, seguido por **2024, com cerca de 28,2%**, e **2023, com aproximadamente 19,7%**. Em conjunto, os anos de **2023, 2024 e 2025 concentram cerca de 82,4% das 1.718 ocorrências**.
+
+Também se observa que o crescimento mais acentuado entre anos consecutivos ocorreu entre **2022 e 2023**, quando a quantidade de registros passou de **164 para 338 ocorrências**.
+
+Entretanto, esse comportamento deve ser interpretado como uma característica da base de dados analisada. O aumento da quantidade de registros não permite concluir, isoladamente, que houve crescimento real do número de acidentes, uma vez que fatores como ampliação da cobertura dos registros, mudanças nos processos de notificação ou maior disponibilidade de dados nos anos mais recentes também podem influenciar essa distribuição.
+
+O gráfico a seguir apresenta visualmente a evolução anual das ocorrências:
+
+![Evolução anual das ocorrências](imagens/6_2_1_evolucao_anual.png)
+
+A análise anual fornece uma visão temporal geral do conjunto de dados e serve como referência para as análises seguintes, nas quais serão avaliados aspectos como gravidade, agentes causadores, segmentos, localização e outros fatores relacionados às ocorrências.
+
 ## 7. Autoavaliação
 
 
