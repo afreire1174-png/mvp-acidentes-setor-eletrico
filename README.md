@@ -774,6 +774,33 @@ O gráfico evidencia a predominância da **Transmissão** entre as principais co
 
 Também aparecem com frequência registros **não informados** e a categoria **“D”**. Conforme já identificado anteriormente, a categoria “D” foi mantida conforme registrada na base original, por não haver informação suficiente para associá-la a um agente causador específico. Esses registros devem ser considerados uma limitação de qualidade dos dados na interpretação dos resultados.
 
+#### Combinação: Estado × Agente causador
+
+O cruzamento entre **estado e agente causador** apresenta maior dispersão das combinações em comparação com os cruzamentos anteriores. A associação mais frequente é **BA | D**, com **16 eventos**, seguida por combinações envolvendo acidentes com veículos, eletricidade e registros não informados em diferentes estados.
+
+| Estado | Agente causador | Quantidade | Percentual |
+|---|---|---:|---:|
+| BA | D | 16 | 4,64% |
+| PE | Carro - Capotamento | 7 | 2,03% |
+| MA | Não informado | 7 | 2,03% |
+| BA | Carro - Colisão | 7 | 2,03% |
+| SP | Não informado | 7 | 2,03% |
+| RS | Não informado | 6 | 1,74% |
+| BA | Eletricidade | 6 | 1,74% |
+| PE | Eletricidade | 6 | 1,74% |
+| RJ | Carro - Capotamento | 6 | 1,74% |
+| MG | Não informado | 6 | 1,74% |
+
+#### Principais combinações: Estado × Agente causador
+
+![Principais combinações Estado x Agente causador](imagens/6_4_6_estado_agente_causador.png)
+
+O gráfico mostra que a combinação **BA | D** apresenta a maior frequência entre os cruzamentos analisados. Também aparecem com destaque ocorrências relacionadas a **capotamentos, colisões e eletricidade**, distribuídas entre diferentes estados.
+
+A presença de registros **não informados** e da categoria **“D”**, mantida conforme registrada na base original, deve ser considerada como limitação de qualidade dos dados. De forma geral, esse cruzamento mostra uma distribuição mais dispersa, sem uma única associação dominante entre estado e agente causador, além da combinação observada na Bahia.
+
+
+
 
 
 
