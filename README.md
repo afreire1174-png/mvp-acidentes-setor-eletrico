@@ -848,6 +848,45 @@ A análise por segmento mostra que os **15 acidentes fatais** estão concentrado
 
 O gráfico evidencia a predominância do segmento de **Transmissão**, com **8 acidentes fatais (53,33%)**, seguido pelo **CSC**, com **5 registros (33,33%)**. Expansão e Adm apresentam **1 ocorrência cada (6,67%)**.
 
+#### Distribuição dos acidentes fatais por estado
+
+Os **15 acidentes fatais** estão distribuídos entre oito estados. **RN** e **PE** apresentam as maiores quantidades, com **3 registros cada (20,00%)**. Em seguida aparecem **PB, GO e PA**, com **2 ocorrências cada (13,33%)**.
+
+| Estado | Quantidade | Percentual |
+|---|---:|---:|
+| RN | 3 | 20,00% |
+| PE | 3 | 20,00% |
+| PB | 2 | 13,33% |
+| GO | 2 | 13,33% |
+| PA | 2 | 13,33% |
+| PR | 1 | 6,67% |
+| BA | 1 | 6,67% |
+| SE | 1 | 6,67% |
+
+#### Estados com maior número de acidentes fatais
+
+![Estados com maior número de acidentes fatais](imagens/6_4_8_acidentes_fatais_estado.png)
+
+O gráfico mostra uma distribuição relativamente dispersa dos acidentes fatais entre os estados, com destaque para **RN** e **PE**, que concentram os maiores números de registros.
+
+#### Distribuição dos acidentes fatais por local
+
+A análise dos **15 acidentes fatais** mostra maior concentração em **Via pública**, com **9 registros (60,00%)**. Em seguida aparecem **Empresa**, com **4 ocorrências (26,67%)**, e **Área rural**, com **2 registros (13,33%)**.
+
+| Local | Quantidade | Percentual |
+|---|---:|---:|
+| Via pública | 9 | 60,00% |
+| Empresa | 4 | 26,67% |
+| Área rural | 2 | 13,33% |
+
+#### Principais locais dos acidentes fatais
+
+![Principais locais dos acidentes fatais](imagens/6_4_9_acidentes_fatais_local.png)
+
+O gráfico evidencia a predominância de acidentes fatais em **Via pública**, que concentra mais da metade dos registros analisados. Os demais casos estão distribuídos entre **Empresa** e **Área rural**.
+
+
+
 
 
 
