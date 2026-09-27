@@ -603,6 +603,32 @@ Os resultados indicam uma concentração relevante dos eventos de maior grau de 
 
 A análise percentual complementa a frequência absoluta apresentada no item 6.3.1, permitindo avaliar a representatividade de cada agente causador no conjunto de eventos Alto/Crítico. Ressalta-se que os resultados representam frequência e associação, não permitindo, isoladamente, estabelecer relação direta de causa e efeito entre o agente causador e o grau de risco.
 
+### 6.4.1 Principais características dos eventos Alto/Crítico
+
+Foram identificados **345 eventos classificados como Alto ou Crítico**. A distribuição por segmento mostra maior concentração na **Transmissão**, seguida por **Expansão**, **Geração - Hidráulica** e **CSC**.
+
+| Segmento | Quantidade | Percentual |
+|---|---:|---:|
+| Transmissão | 153 | 44,35% |
+| Expansão | 52 | 15,07% |
+| Geração - Hidráulica | 45 | 13,04% |
+| CSC | 43 | 12,46% |
+| Adm | 26 | 7,54% |
+| Expansão - Proj. Estr. | 10 | 2,90% |
+| Geração - Térmica | 8 | 2,32% |
+| Geração - Eólica | 3 | 0,87% |
+| Logística | 2 | 0,58% |
+| Telecomunicação | 2 | 0,58% |
+| Geração | 1 | 0,29% |
+
+A tabela evidencia que a **Transmissão concentra 44,35% dos eventos Alto/Crítico**, valor significativamente superior aos demais segmentos. Em seguida aparecem **Expansão, Geração - Hidráulica e CSC**, enquanto os demais segmentos apresentam participação menor.
+
+#### Distribuição dos eventos Alto/Crítico por segmento
+
+![Eventos Alto/Crítico por segmento](imagens/6_4_1_eventos_alto_critico_segmento.png)
+
+O gráfico reforça a predominância do segmento de **Transmissão**, que apresenta quantidade de eventos Alto/Crítico significativamente superior aos demais segmentos analisados.
+
 
 ## 7. Autoavaliação
 
