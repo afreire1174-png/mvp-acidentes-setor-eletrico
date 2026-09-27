@@ -128,60 +128,39 @@ A substituição da coluna Chave na versão preparada para análise por id_regis
 
 ### 4.1 Arquitetura do pipeline
 
-O pipeline foi planejado segundo a arquitetura medalhão, que organiza os dados em três camadas com diferentes níveis de tratamento e
-preparação para análise: Bronze, Silver e Gold.
+O pipeline de dados foi estruturado segundo a arquitetura medalhão, organizando o processamento em três camadas: Bronze, Silver e Gold.
 
 | Camada | Finalidade no projeto |
 |---|---|
-| Bronze | Preservar os dados recebidos, com alterações técnicas mínimas, permitindo rastreabilidade e reprocessamento. |
-| Silver | Aplicar validações, padronização, tratamento de inconsistências e medidas de proteção dos dados pessoais. |
-| Gold | Disponibilizar a tabela analítica no modelo flat e os indicadores necessários às perguntas de negócio. |
+| Bronze | Preservar os dados recebidos, realizando apenas os ajustes técnicos necessários para armazenamento e rastreabilidade. |
+| Silver | Aplicar tratamentos de qualidade, limpeza, padronização e validação dos dados. |
+| Gold | Disponibilizar a base consolidada e preparada para responder às perguntas de negócio do MVP. |
 
-As camadas representam etapas lógicas dentro do mesmo ambiente Databricks, sem necessidade de plataformas separadas para armazenamento
-e análise.
+As três camadas foram implementadas no Databricks, utilizando tabelas Delta no catálogo `workspace`, nos schemas `mvp_bronze`, `mvp_silver` e `mvp_gold`.
 
-Foram criados os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold` no catálogo `workspace`, estabelecendo a organização das camadas
-da arquitetura medalhão.
+O fluxo adotado permite acompanhar os dados desde a ingestão do arquivo de entrada até a disponibilização da tabela analítica utilizada nas consultas, tabelas e gráficos apresentados no projeto.
 
-Também foram realizados o upload da planilha para o Volume `arquivos_mvp`, a criação e persistência do identificador técnico,
-a exclusão da coluna `Chave` da versão analítica e o perfilamento inicial.
-
-Foram criados os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold` no catálogo `workspace`. A tabela `workspace.mvp_bronze.acidentes`
-foi carregada e verificada, apresentando 1.718 registros, 23 colunas e armazenamento em formato Delta.
-
-A implementação das tabelas Silver e Gold e das transformações
-entre as camadas permanece pendente.
-
+Na camada Gold foi mantido o modelo de tabela única desnormalizada (flat), adequado ao volume de dados e ao escopo analítico deste MVP.
 
 ### 4.2 Ingestão dos dados no Databricks
 
-A base original, descrita na seção Coleta de Dados, possui 1.718 registros e 63 colunas. Para esta etapa, foi utilizada a versão
-`BD_Acidentes_tratada_v3.xlsx`, composta por 1.718 registros e 23 colunas, resultante da preparação anterior ao upload.
+A base original possui 1.718 registros e 63 colunas. Para a implementação do pipeline foi utilizada a versão tratada `BD_Acidentes_tratada_v3.xlsx`, contendo 1.718 registros e 23 colunas selecionadas para o escopo deste MVP.
 
-A relação dos campos removidos ou modificados e os critérios utilizados nessa preparação ainda precisam ser documentados. As transformações
-apresentadas nesta seção têm como ponto de partida a versão de 23 colunas.
+O arquivo foi carregado no Volume do Databricks:
 
-A carga inicial foi realizada por meio do upload desse arquivo para o Volume `arquivos_mvp`, pertencente ao schema `default` do catálogo
-`workspace`, no Databricks. O notebook de processamento foi salvo na pasta de usuário do Workspace.
+`/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_tratada_v3.xlsx`
 
-**Caminho do arquivo de entrada:**
+A aba `Acidentes` foi lida em Python utilizando as bibliotecas `pandas` e `openpyxl`. Após a leitura, foram conferidas as dimensões da base antes da criação da camada Bronze.
 
-```text
-/Volumes/workspace/default/arquivos_mvp/BD_Acidentes_tratada_v3.xlsx
-```
+**Resultado da ingestão:**
 
-A leitura da aba `Acidentes` foi realizada em Python, utilizando
-as bibliotecas pandas e openpyxl. A conferência confirmou
-1.718 registros e 23 colunas.
+| Verificação | Resultado |
+|---|---:|
+| Registros | 1.718 |
+| Colunas | 23 |
+| Aba utilizada | `Acidentes` |
 
-**Resultado obtido:**
-
-```text
-Quantidade de registros: 1718
-Quantidade de colunas: 23
-Colunas: ['Empregado', 'Classificação', 'Empresa', 'Segmento', 'Sexo', 'Tempo de Empresa', 'Dia da Semana', 'Mês', 'Ano', 'Hora', 'Descrição', 'Local', 'Organização do trabalho', 'Estado', 'Diretoria', 'Agente Causador', 'Tipo de Lesão', 'Parte do Corpo Atingida', 'Gravidade', 'Potencial', 'Grau de Risco', 'Compromissos (Regra de Ouro)', 'Chave']
-```
-
+A versão preparada para análise preserva os registros necessários às perguntas de negócio e não disponibiliza publicamente a base corporativa original.
 ### 4.3 Carga da camada Bronze
 
 A partir do arquivo apresentado no item 4.2, foi preparada a rotina
