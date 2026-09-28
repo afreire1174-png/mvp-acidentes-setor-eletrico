@@ -228,6 +228,14 @@ A quantidade de registros foi comparada entre Bronze, Silver e Gold:
 | Silver | 1.718 |
 | Gold | 1.718 |
 
+#### Evidência da persistência das camadas
+
+A consulta abaixo confirma a existência e a quantidade de registros das tabelas persistidas nas três camadas do pipeline.
+
+![Persistência das camadas Bronze Silver e Gold](imagens/persistencia_bronze_silver_gold.png)
+
+*Figura 2 — Evidência da persistência das tabelas Bronze, Silver e Gold no Databricks, com a quantidade de registros em cada camada.*
+
 A manutenção da quantidade de registros ao longo das camadas demonstra que os tratamentos aplicados não provocaram perda de linhas durante o processamento.
 
 Também foram realizadas verificações de valores nulos, duplicidades, categorias, consistência temporal e identificação dos registros, cujos resultados são apresentados na seção **5 — Qualidade dos Dados**.
