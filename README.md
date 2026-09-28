@@ -140,7 +140,7 @@ As três camadas foram implementadas no Databricks, utilizando tabelas Delta no 
 
 A estrutura abaixo evidencia a organização do catálogo `workspace`, com os schemas correspondentes às camadas Bronze, Silver e Gold e suas respectivas tabelas persistidas no Databricks.
 
-![Modelagem e catálogo de dados no Databricks](imagens/catalogo_modelagem_databricks.png)
+![Arquitetura Medalhão do MVP](imagens/Arquitetura_Medalhao_MVP_Acidentes_setor_eletrico.png)
 
 *Figura 1 — Estrutura do catálogo de dados no Databricks, mostrando os schemas `mvp_bronze`, `mvp_silver` e `mvp_gold` e suas respectivas tabelas persistidas.*
 
