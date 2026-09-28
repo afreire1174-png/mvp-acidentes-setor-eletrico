@@ -132,7 +132,7 @@ O pipeline de dados foi estruturado segundo a arquitetura medalhão, organizando
 
 A figura a seguir apresenta uma visão geral da arquitetura adotada no MVP.
 
-![Arquitetura Medalhão do MVP](Arquitetura_Medalhao_MVP_Acidentes_setor_eletrico.png)
+![Arquitetura Medalhão do MVP](imagens/Arquitetura_Medalhao_MVP_Acidentes_setor_eletrico.png)
 
 As três camadas foram implementadas no Databricks, utilizando tabelas Delta no catálogo `workspace`, nos schemas `mvp_bronze`, `mvp_silver` e `mvp_gold`.
 
